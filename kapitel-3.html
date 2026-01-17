@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapitel III: Venus' faser – Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Venus Simulator Styles */
+        .venus-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .model-panel {
+            background: var(--surface-elevated);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .model-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .model-name {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .model-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+        
+        .model-view {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            background: radial-gradient(ellipse at center, rgba(20,20,35,0.9) 0%, var(--night-deep) 80%);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .orbit-ring {
+            position: absolute;
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .model-view .sun {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #fff8e0 0%, #ffc800 40%, #ff8800 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffc800;
+        }
+        
+        .model-view .earth {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #4a8cc8 0%, #2a5c78 50%, #1a3c48 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(74, 140, 200, 0.4);
+        }
+        
+        .model-view .venus {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--venus-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--venus-glow);
+        }
+        
+        .venus-appearance {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .venus-disk-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .venus-disk {
+            width: 100%;
+            height: 100%;
+            background: var(--venus-glow);
+            border-radius: 50%;
+        }
+        
+        .venus-shadow {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: var(--night-deep);
+            transition: all 0.3s;
+        }
+        
+        .venus-stats {
+            text-align: center;
+        }
+        
+        .venus-stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .venus-stat-row:last-child { border-bottom: none; }
+        
+        .venus-stat-label { color: var(--text-dim); }
+        .venus-stat-value { color: var(--text-primary); font-weight: 500; }
+        
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(96, 160, 104, 0.15) 0%, rgba(50, 80, 60, 0.1) 100%);
+            border: 1px solid rgba(96, 160, 104, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .conclusion-box h4 {
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .conclusion-box p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .venus-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main class="main-content">
+            <header class="chapter-header fade-in">
+                <div class="chapter-label">Kapitel III</div>
+                <h1 class="chapter-title">Venus' faser</h1>
+                <p class="chapter-subtitle">Det afgørende bevis</p>
+            </header>
+            
+            <!-- STORY SECTION -->
+            <section class="story-section fade-in fade-in-delay-1">
+                <p class="lead">
+                    Jupiter-månerne viste, at ikke alt kredsede om Jorden. Men Venus leverede det 
+                    dødsstød, som gjorde Ptolemæus' model umulig.
+                </p>
+                <p>
+                    I efteråret 1610 begyndte Galileo at observere <strong>Venus</strong> gennem sit teleskop. 
+                    Han så noget forbløffende: planeten havde <span class="highlight">faser</span>, ligesom Månen.
+                </p>
+                <p>
+                    Venus gik fra at være en lille, næsten fuld skive – til at blive en stor, tynd segl. 
+                    Denne observation var <strong>umulig</strong> i Ptolemæus' model.
+                </p>
+            </section>
+            
+            <!-- VENUS SIMULATOR -->
+            <div class="simulator-section fade-in fade-in-delay-2" id="venusSimulator">
+                <div class="simulator-header">
+                    <span class="simulator-icon">☉</span>
+                    <span class="simulator-title">Venus-fase simulator</span>
+                </div>
+                
+                <div class="venus-comparison">
+                    <!-- PTOLEMY MODEL -->
+                    <div class="model-panel">
+                        <div class="model-header">
+                            <h4 class="model-name">Ptolemæus' model</h4>
+                            <p class="model-desc">Jorden i centrum</p>
+                        </div>
+                        <div class="model-view" id="ptolemyView">
+                            <div class="orbit-ring" style="width: 70%; height: 70%;"></div>
+                            <div class="earth" style="left: calc(50% - 7px); top: calc(50% - 7px);"></div>
+                            <div class="sun" id="ptolemySun" style="left: 30%; top: 30%;"></div>
+                            <div class="venus" id="ptolemyVenus" style="left: 40%; top: 40%;"></div>
+                        </div>
+                        <div class="venus-appearance">
+                            <div class="venus-disk-container" id="ptolemyDiskContainer">
+                                <div class="venus-disk"></div>
+                                <div class="venus-shadow" id="ptolemyShadow"></div>
+                            </div>
+                        </div>
+                        <div class="venus-stats">
+                            <div class="venus-stat-row">
+                                <span class="venus-stat-label">Fase:</span>
+                                <span class="venus-stat-value" id="ptolemyPhaseLabel">Segl</span>
+                            </div>
+                            <div class="venus-stat-row">
+                                <span class="venus-stat-label">Størrelse:</span>
+                                <span class="venus-stat-value" id="ptolemySizeLabel">Lille</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- COPERNICUS MODEL -->
+                    <div class="model-panel">
+                        <div class="model-header">
+                            <h4 class="model-name">Copernicus' model</h4>
+                            <p class="model-desc">Solen i centrum</p>
+                        </div>
+                        <div class="model-view" id="copernicusView">
+                            <div class="orbit-ring" style="width: 36%; height: 36%;"></div>
+                            <div class="orbit-ring" style="width: 64%; height: 64%;"></div>
+                            <div class="sun" style="left: calc(50% - 10px); top: calc(50% - 10px);"></div>
+                            <div class="venus" id="copernicusVenus" style="left: 30%; top: 50%;"></div>
+                            <div class="earth" id="copernicusEarth" style="left: 70%; top: 50%;"></div>
+                        </div>
+                        <div class="venus-appearance">
+                            <div class="venus-disk-container" id="copernicusDiskContainer">
+                                <div class="venus-disk"></div>
+                                <div class="venus-shadow" id="copernicusShadow"></div>
+                            </div>
+                        </div>
+                        <div class="venus-stats">
+                            <div class="venus-stat-row">
+                                <span class="venus-stat-label">Fase:</span>
+                                <span class="venus-stat-value" id="copernicusPhaseLabel">Fuld</span>
+                            </div>
+                            <div class="venus-stat-row">
+                                <span class="venus-stat-label">Størrelse:</span>
+                                <span class="venus-stat-value" id="copernicusSizeLabel">Mellem</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls-group">
+                    <div class="control-row">
+                        <label class="control-label">Venus' position i sin bane</label>
+                        <input type="range" id="venusSlider" min="0" max="360" value="0">
+                    </div>
+                    
+                    <div class="button-row">
+                        <button class="btn" id="btnVenusPlay">Afspil</button>
+                        <button class="btn" id="btnVenusInferior">Nedre konjunktion</button>
+                        <button class="btn" id="btnVenusSuperior">Øvre konjunktion</button>
+                        <button class="btn" id="btnVenusElongation">Største elongation</button>
+                    </div>
+                </div>
+                
+                <div class="conclusion-box">
+                    <h4>Konklusionen</h4>
+                    <p>
+                        I Ptolemæus' model forbliver Venus altid mellem Jorden og Solen. 
+                        Den kan derfor <strong>aldrig</strong> vise en "fuld" fase. 
+                        Men Galileo observerede netop dette – en lille, næsten fuld Venus.
+                        <br><br>
+                        Dette var kun muligt hvis Venus kredser om <strong>Solen</strong>, ikke Jorden.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FACTS -->
+            <section class="facts-section fade-in">
+                <div class="facts-header">
+                    <div class="facts-icon">i</div>
+                    <div class="facts-title">Sammenhængen mellem fase og størrelse</div>
+                </div>
+                <p>
+                    <strong>I Copernicus' model:</strong> Når Venus er "fuld" (bagsiden mod os), 
+                    er den på den anden side af Solen – altså langt væk og lille. 
+                    Når den er en "segl" (siden mod os), er den tæt på Jorden og ser stor ud.
+                </p>
+                <p>
+                    Ptolemæus' model kan ikke forklare denne omvendte sammenhæng mellem fase og størrelse.
+                </p>
+            </section>
+            
+            <!-- PAGE NAVIGATION -->
+            <nav class="page-nav">
+                <a href="kapitel-2.html" class="page-nav-btn prev">
+                    <span class="arrow">←</span>
+                    <div>
+                        <div class="label">Forrige</div>
+                        <div class="title">Jupiters måner</div>
+                    </div>
+                </a>
+                
+                <div class="chapter-indicator">
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot active"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                </div>
+                
+                <a href="kapitel-4.html" class="page-nav-btn next">
+                    <div>
+                        <div class="label">Næste</div>
+                        <div class="title">Kronologien</div>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+        </main>
+        
+        <!-- PORTRAIT SIDEBAR -->
+        <aside class="portrait-sidebar">
+            <div class="portrait-card active">
+                <img src="images/galileo.jpg" alt="Galileo Galilei" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Galileo Galilei</h3>
+                    <div class="portrait-dates">1564–1642 · Pisa</div>
+                </div>
+            </div>
+            
+            <div class="portrait-card">
+                <img src="images/copernicus.jpg" alt="Nicolaus Copernicus" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Nicolaus Copernicus</h3>
+                    <div class="portrait-dates">1473–1543 · Torun</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>

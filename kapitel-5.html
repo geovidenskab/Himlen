@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapitel V: Lysets hastighed – Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Rømer Diagram Styles */
+        .roemer-diagram {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: radial-gradient(ellipse at center, rgba(20,20,35,0.95) 0%, var(--night-deep) 85%);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .diagram-sun {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle, #fff8e0 0%, #ffc800 40%, #ff8800 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px #ffc800;
+            z-index: 10;
+        }
+        
+        .diagram-orbit {
+            position: absolute;
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .orbit-earth { width: 35%; height: 35%; border-color: rgba(74, 140, 200, 0.3); }
+        .orbit-jupiter { width: 85%; height: 85%; border-color: rgba(232, 168, 72, 0.2); }
+        
+        .diagram-planet {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+        
+        .diagram-earth {
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #4a8cc8 0%, #2a5c78 50%, #1a3c48 100%);
+            box-shadow: 0 0 15px rgba(74, 140, 200, 0.5);
+        }
+        
+        .diagram-jupiter {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #f0e0c0 0%, #d4a84b 40%, #a08040 80%);
+            box-shadow: 0 0 20px rgba(232, 168, 72, 0.4);
+        }
+        
+        .diagram-io {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--io-orange);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--io-orange);
+            z-index: 4;
+        }
+        
+        .light-ray {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--io-orange), rgba(232, 168, 72, 0.3));
+            transform-origin: left center;
+            z-index: 3;
+            border-radius: 1px;
+        }
+        
+        .diagram-label {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            background: rgba(6, 6, 10, 0.8);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        
+        .diagram-label.earth-label { left: 40%; bottom: 38%; }
+        .diagram-label.jupiter-label { left: 38%; top: 5%; }
+        
+        .roemer-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .roemer-stat {
+            background: var(--surface-elevated);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .roemer-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        
+        .roemer-stat-value {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+        }
+        
+        .roemer-stat-unit {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-left: 0.2rem;
+        }
+        
+        @media (max-width: 640px) {
+            .roemer-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main class="main-content">
+            <header class="chapter-header fade-in">
+                <div class="chapter-label">Kapitel V</div>
+                <h1 class="chapter-title">Lysets hastighed</h1>
+                <p class="chapter-subtitle">Paris, 1676</p>
+            </header>
+            
+            <!-- STORY SECTION -->
+            <section class="story-section fade-in fade-in-delay-1">
+                <p class="lead">
+                    66 år efter Galileos opdagelse brugte en dansk astronom hans Jupiter-måner 
+                    til at bevise noget endnu mere revolutionerende: at lyset har en endelig hastighed.
+                </p>
+                <p>
+                    <strong>Ole Rømer</strong> arbejdede ved Paris' observatorium og studerede 
+                    Ios formørkelser – hvornår månen forsvandt bag Jupiter. Han opdagede noget mærkeligt: 
+                    formørkelserne kom <span class="highlight">ikke til tiden</span>.
+                </p>
+                <p>
+                    Når Jorden var tæt på Jupiter, kom formørkelserne lidt for tidligt. 
+                    Når Jorden var langt væk, kom de for sent. Rømer indså sandheden: 
+                    <strong>Lyset bruger tid på at nå os.</strong>
+                </p>
+            </section>
+            
+            <!-- RØMER DIAGRAM -->
+            <div class="simulator-section fade-in fade-in-delay-2" id="roemerSimulator">
+                <div class="simulator-header">
+                    <span class="simulator-icon">💡</span>
+                    <span class="simulator-title">Rømers observation</span>
+                </div>
+                
+                <div class="roemer-diagram" id="roemerDiagram">
+                    <div class="diagram-orbit orbit-earth"></div>
+                    <div class="diagram-orbit orbit-jupiter"></div>
+                    <div class="diagram-sun"></div>
+                    <div class="diagram-planet diagram-earth" id="roemerEarth"></div>
+                    <div class="diagram-planet diagram-jupiter" id="roemerJupiter"></div>
+                    <div class="diagram-io" id="roemerIo"></div>
+                    <div class="light-ray" id="lightRay"></div>
+                    <span class="diagram-label earth-label">Jorden</span>
+                    <span class="diagram-label jupiter-label">Jupiter</span>
+                </div>
+                
+                <div class="roemer-stats">
+                    <div class="roemer-stat">
+                        <div class="roemer-stat-label">Afstand til Jupiter</div>
+                        <div class="roemer-stat-value">
+                            <span id="roemerDist">4.2</span>
+                            <span class="roemer-stat-unit">AU</span>
+                        </div>
+                    </div>
+                    <div class="roemer-stat">
+                        <div class="roemer-stat-label">Lysets rejsetid</div>
+                        <div class="roemer-stat-value">
+                            <span id="roemerTime">35</span>
+                            <span class="roemer-stat-unit">min</span>
+                        </div>
+                    </div>
+                    <div class="roemer-stat">
+                        <div class="roemer-stat-label">Forsinkelse</div>
+                        <div class="roemer-stat-value">
+                            <span id="roemerDelay">0</span>
+                            <span class="roemer-stat-unit">min</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls-group">
+                    <div class="control-row">
+                        <label class="control-label">Jordens position (måned i omløb)</label>
+                        <input type="range" id="roemerSlider" min="0" max="12" value="0" step="0.1">
+                    </div>
+                    
+                    <div class="button-row">
+                        <button class="btn" id="btnOpposition">Opposition (tættest)</button>
+                        <button class="btn" id="btnConjunction">Konjunktion (længst væk)</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- QUOTE -->
+            <blockquote class="quote-block fade-in">
+                <p>
+                    "Lyset bruger tid på at komme til os fra satellitterne... 
+                    denne forsinkelse er omkring 22 minutter for hele diameteren af Jordens bane."
+                </p>
+                <cite>— Ole Rømer, 1676</cite>
+            </blockquote>
+            
+            <!-- FACTS -->
+            <section class="facts-section fade-in">
+                <div class="facts-header">
+                    <div class="facts-icon">i</div>
+                    <div class="facts-title">Hvor hurtigt er lyset?</div>
+                </div>
+                <p>
+                    Rømers estimat var ca. <strong>220.000 km/s</strong> – omkring 26% lavere end den 
+                    faktiske værdi på 299.792 km/s. Men det var første gang, nogen overhovedet havde 
+                    bevist, at lyset har en <strong>endelig</strong> hastighed.
+                </p>
+                <p>
+                    Mange – inklusive store videnskabsmænd som Cassini – troede, at lyset bevægede sig 
+                    øjeblikkeligt. Rømer beviste, at de tog fejl.
+                </p>
+            </section>
+            
+            <section class="facts-section important fade-in">
+                <div class="facts-header">
+                    <div class="facts-icon">!</div>
+                    <div class="facts-title">Fra Aarhus til Paris til verdenshistorien</div>
+                </div>
+                <p>
+                    Ole Rømer var født i Aarhus og uddannet ved Københavns Universitet. 
+                    Hans arbejde i Paris førte til en af fysikkens mest fundamentale opdagelser. 
+                    Senere vendte han hjem og blev bl.a. Københavns borgmester og politidirektør.
+                </p>
+            </section>
+            
+            <!-- PAGE NAVIGATION -->
+            <nav class="page-nav">
+                <a href="kapitel-4.html" class="page-nav-btn prev">
+                    <span class="arrow">←</span>
+                    <div>
+                        <div class="label">Forrige</div>
+                        <div class="title">Kronologien</div>
+                    </div>
+                </a>
+                
+                <div class="chapter-indicator">
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot active"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                </div>
+                
+                <a href="kapitel-6.html" class="page-nav-btn next">
+                    <div>
+                        <div class="label">Næste</div>
+                        <div class="title">Keplers ellipser</div>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+        </main>
+        
+        <!-- PORTRAIT SIDEBAR -->
+        <aside class="portrait-sidebar">
+            <div class="portrait-card active">
+                <img src="images/roemer.jpg" alt="Ole Rømer" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Ole Rømer</h3>
+                    <div class="portrait-dates">1644–1710 · Aarhus</div>
+                </div>
+            </div>
+            
+            <div class="portrait-card" style="opacity: 0.5;">
+                <img src="images/galileo.jpg" alt="Galileo Galilei" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Galileo Galilei</h3>
+                    <div class="portrait-dates">1564–1642</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapitel II: Jupiters måner – Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Jupiter Simulator Styles */
+        .jupiter-viewport {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: radial-gradient(ellipse at center, rgba(25,25,40,0.9) 0%, var(--night-deep) 70%);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .jupiter-system {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+        }
+        
+        .jupiter-planet {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            left: -22px;
+            top: -22px;
+            background: linear-gradient(135deg, #f0e0c0 0%, #d4a84b 40%, #a08040 80%, #705830 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(232, 212, 168, 0.3), inset -10px -5px 20px rgba(0,0,0,0.4);
+        }
+        
+        .jupiter-bands {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        
+        .jupiter-bands::before,
+        .jupiter-bands::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(120, 80, 40, 0.5);
+            left: 0;
+        }
+        
+        .jupiter-bands::before { top: 35%; }
+        .jupiter-bands::after { top: 55%; }
+        
+        .moon {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.15s linear;
+        }
+        
+        .moon-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .show-labels .moon-label { opacity: 1; }
+        
+        .moon-io {
+            width: 8px;
+            height: 8px;
+            background: var(--io-orange);
+            box-shadow: 0 0 12px var(--io-orange);
+        }
+        
+        .moon-europa {
+            width: 7px;
+            height: 7px;
+            background: var(--europa-ice);
+            box-shadow: 0 0 10px var(--europa-ice);
+        }
+        
+        .moon-ganymede {
+            width: 10px;
+            height: 10px;
+            background: var(--ganymede-grey);
+            box-shadow: 0 0 14px var(--ganymede-grey);
+        }
+        
+        .moon-callisto {
+            width: 9px;
+            height: 9px;
+            background: var(--callisto-brown);
+            box-shadow: 0 0 12px var(--callisto-brown);
+        }
+        
+        .sim-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .sim-stat {
+            background: var(--surface-elevated);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .sim-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sim-stat-value {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+        }
+        
+        .moon-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        .moon-card {
+            background: var(--surface-elevated);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        .moon-card-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 auto 0.4rem;
+        }
+        
+        .moon-card.io .moon-card-dot { background: var(--io-orange); box-shadow: 0 0 8px var(--io-orange); }
+        .moon-card.europa .moon-card-dot { background: var(--europa-ice); box-shadow: 0 0 8px var(--europa-ice); }
+        .moon-card.ganymede .moon-card-dot { background: var(--ganymede-grey); box-shadow: 0 0 8px var(--ganymede-grey); }
+        .moon-card.callisto .moon-card-dot { background: var(--callisto-brown); box-shadow: 0 0 8px var(--callisto-brown); }
+        
+        .moon-card h4 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.15rem;
+        }
+        
+        .moon-card .period {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        
+        .datetime-inputs {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .datetime-inputs input {
+            flex: 1;
+            padding: 0.6rem 0.8rem;
+            background: var(--surface-elevated);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .datetime-inputs input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        
+        .toggle-row {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        
+        .toggle {
+            width: 40px;
+            height: 20px;
+            background: var(--surface-elevated);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .toggle.active { background: var(--accent-blue); }
+        .toggle.active::after {
+            transform: translateX(20px);
+            background: var(--night-deep);
+        }
+        
+        .toggle-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 640px) {
+            .moon-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main class="main-content">
+            <header class="chapter-header fade-in">
+                <div class="chapter-label">Kapitel II</div>
+                <h1 class="chapter-title">Jupiters måner</h1>
+                <p class="chapter-subtitle">Observer som Galileo</p>
+            </header>
+            
+            <!-- INTRO -->
+            <section class="story-section fade-in fade-in-delay-1">
+                <p class="lead">
+                    Brug simulatoren nedenfor til at se Jupiters fire store måner – præcis som 
+                    Galileo så dem i sit teleskop. Du kan rejse i tid, tilføje parallaktisk 
+                    vinkel og se hvordan månerne bevæger sig.
+                </p>
+            </section>
+            
+            <!-- JUPITER SIMULATOR -->
+            <div class="simulator-section fade-in fade-in-delay-2" id="jupiterSimulator">
+                <div class="simulator-header">
+                    <span class="simulator-icon">🔭</span>
+                    <span class="simulator-title">Jupiter-simulator</span>
+                </div>
+                
+                <div class="jupiter-viewport" id="jupiterViewport">
+                    <div class="jupiter-system" id="jupiterSystem">
+                        <div class="jupiter-planet">
+                            <div class="jupiter-bands"></div>
+                        </div>
+                        <div class="moon moon-io" id="moonIo"><span class="moon-label">Io</span></div>
+                        <div class="moon moon-europa" id="moonEuropa"><span class="moon-label">Europa</span></div>
+                        <div class="moon moon-ganymede" id="moonGanymede"><span class="moon-label">Ganymede</span></div>
+                        <div class="moon moon-callisto" id="moonCallisto"><span class="moon-label">Callisto</span></div>
+                    </div>
+                </div>
+                
+                <div class="sim-stats">
+                    <div class="sim-stat">
+                        <div class="sim-stat-label">Dato og tid</div>
+                        <div class="sim-stat-value" id="displayDateTime">12. jan. 2026, 19:00</div>
+                    </div>
+                    <div class="sim-stat">
+                        <div class="sim-stat-label">Parallaktisk vinkel</div>
+                        <div class="sim-stat-value"><span id="displayAngle">0</span>°</div>
+                    </div>
+                </div>
+                
+                <div class="controls-group">
+                    <div class="control-row">
+                        <label class="control-label">Dato og tid</label>
+                        <div class="datetime-inputs">
+                            <input type="date" id="inputDate" value="2026-01-12">
+                            <input type="time" id="inputTime" value="19:00">
+                        </div>
+                    </div>
+                    
+                    <div class="control-row">
+                        <label class="control-label">Tidsskyder (±7 dage)</label>
+                        <input type="range" id="timeSlider" min="-168" max="168" value="0">
+                    </div>
+                    
+                    <div class="control-row">
+                        <label class="control-label">Parallaktisk vinkel</label>
+                        <input type="range" id="angleSlider" min="-45" max="45" value="0">
+                    </div>
+                    
+                    <div class="control-row">
+                        <div class="toggle-row">
+                            <div class="toggle-item">
+                                <div class="toggle" id="toggleLabels"></div>
+                                <span class="toggle-label">Vis navne</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-row">
+                        <button class="btn" id="btnPlay">Afspil</button>
+                        <button class="btn" id="btnGalileo">7. jan 1610</button>
+                        <button class="btn" id="btnNow">Nu</button>
+                    </div>
+                </div>
+                
+                <div class="moon-grid">
+                    <div class="moon-card io">
+                        <div class="moon-card-dot"></div>
+                        <h4>Io</h4>
+                        <div class="period">1,77 dage</div>
+                    </div>
+                    <div class="moon-card europa">
+                        <div class="moon-card-dot"></div>
+                        <h4>Europa</h4>
+                        <div class="period">3,55 dage</div>
+                    </div>
+                    <div class="moon-card ganymede">
+                        <div class="moon-card-dot"></div>
+                        <h4>Ganymede</h4>
+                        <div class="period">7,15 dage</div>
+                    </div>
+                    <div class="moon-card callisto">
+                        <div class="moon-card-dot"></div>
+                        <h4>Callisto</h4>
+                        <div class="period">16,69 dage</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FACTS -->
+            <section class="facts-section fade-in">
+                <div class="facts-header">
+                    <div class="facts-icon">i</div>
+                    <div class="facts-title">De galileiske måner</div>
+                </div>
+                <p>
+                    De fire store måner kaldes tilsammen <strong>de galileiske måner</strong> efter deres opdager. 
+                    Ganymede er den største måne i solsystemet – større end planeten Merkur.
+                </p>
+                <p>
+                    <strong>Io</strong> er den mest vulkansk aktive krop i solsystemet. 
+                    <strong>Europa</strong> har sandsynligvis et ocean under sin is-overflade. 
+                    Begge er blandt de mest lovende steder at søge efter liv uden for Jorden.
+                </p>
+            </section>
+            
+            <!-- PAGE NAVIGATION -->
+            <nav class="page-nav">
+                <a href="kapitel-1.html" class="page-nav-btn prev">
+                    <span class="arrow">←</span>
+                    <div>
+                        <div class="label">Forrige</div>
+                        <div class="title">Galileos Blik</div>
+                    </div>
+                </a>
+                
+                <div class="chapter-indicator">
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot active"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                    <span class="chapter-dot"></span>
+                </div>
+                
+                <a href="kapitel-3.html" class="page-nav-btn next">
+                    <div>
+                        <div class="label">Næste</div>
+                        <div class="title">Venus' faser</div>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+        </main>
+        
+        <!-- PORTRAIT SIDEBAR -->
+        <aside class="portrait-sidebar">
+            <div class="portrait-card active">
+                <img src="images/galileo.jpg" alt="Galileo Galilei" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Galileo Galilei</h3>
+                    <div class="portrait-dates">1564–1642 · Pisa</div>
+                </div>
+            </div>
+            
+            <div class="portrait-card" style="opacity: 0.5;">
+                <img src="images/roemer.jpg" alt="Ole Rømer" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Ole Rømer</h3>
+                    <div class="portrait-dates">1644–1710 · Aarhus</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>

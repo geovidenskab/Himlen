@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --night-deep: #08080c;
+            --night-mid: #0f0f18;
+            --night-soft: #1a1a28;
+            --surface: #141420;
+            --surface-light: #1e1e2e;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-dim: #606070;
+            --accent-gold: #d4a84b;
+            --accent-warm: #e8c080;
+            --accent-blue: #6088c0;
+            --accent-red: #c06060;
+            --accent-green: #60a060;
+            --jupiter-glow: #e8d4a8;
+            --venus-glow: #f0e8d0;
+            --io-orange: #e8a848;
+            --europa-ice: #a8c8e8;
+            --ganymede-grey: #b8b8c8;
+            --callisto-brown: #a89888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--night-deep);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        /* Atmospheric background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(100, 60, 120, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(60, 80, 140, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(80, 60, 100, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: linear-gradient(180deg, rgba(8,8,12,0.95) 0%, rgba(8,8,12,0) 100%);
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot:hover { background: rgba(255,255,255,0.3); }
+        .nav-dot.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(96, 136, 192, 0.5);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(80, 40, 100, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 75% 70%, rgba(40, 60, 120, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 90% 60% at 50% 20%, rgba(100, 60, 80, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star-field {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-tagline {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.5s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: clamp(2.8rem, 9vw, 5.5rem);
+            font-weight: 500;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.8s forwards;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent-warm);
+            background: linear-gradient(135deg, var(--accent-warm), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-intro {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.1s forwards;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border: 1px solid var(--accent-blue);
+            border-radius: 100px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.4s forwards;
+            background: rgba(96, 136, 192, 0.1);
+        }
+
+        .hero-cta:hover {
+            background: var(--accent-blue);
+            color: var(--night-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(96, 136, 192, 0.3);
+        }
+
+        .hero-planets {
+            position: absolute;
+            bottom: 10%; right: 5%;
+            width: 50vw; max-width: 500px;
+            aspect-ratio: 1;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        .hero-planet-jupiter {
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 70%; aspect-ratio: 1;
+            background: radial-gradient(ellipse at 30% 30%, #f0e0c0 0%, #c8a060 40%, #806030 80%, #403020 100%);
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+
+        .hero-planet-venus {
+            position: absolute;
+            top: 10%; left: 10%;
+            width: 25%; aspect-ratio: 1;
+            background: radial-gradient(ellipse at 30% 30%, #fffef0 0%, #f0e8c0 60%, #d0c090 100%);
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.8s forwards;
+        }
+
+        .scroll-hint span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(180deg, var(--accent-gold), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; height: 40px; }
+            50% { opacity: 1; height: 60px; }
+        }
+
+        /* Chapters */
+        .chapter {
+            min-height: 100vh;
+            padding: 10vh 5vw;
+            position: relative;
+        }
+
+        .chapter-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .chapter-header { margin-bottom: 4rem; }
+
+        .chapter-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chapter-number::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent-gold), transparent);
+            max-width: 100px;
+        }
+
+        .chapter-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 500;
+            line-height: 1.15;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .chapter-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Narrative */
+        .narrative { max-width: 650px; }
+
+        .narrative p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .narrative p.lead {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            font-weight: 300;
+        }
+
+        .narrative strong { color: var(--text-primary); font-weight: 500; }
+        .highlight { color: var(--accent-warm); }
+        .highlight-blue { color: var(--accent-blue); }
+
+        /* Info cards */
+        .info-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-card-icon {
+            width: 32px; height: 32px;
+            background: rgba(212, 168, 75, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .info-card-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .info-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .info-card p + p { margin-top: 0.75rem; }
+
+        .info-card.important { border-color: rgba(192, 96, 96, 0.3); }
+        .info-card.important .info-card-icon { background: rgba(192, 96, 96, 0.15); }
+        .info-card.important .info-card-title { color: var(--accent-red); }
+
+        /* Person cards */
+        .person-card {
+            display: flex;
+            gap: 1.5rem;
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .person-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(212, 168, 75, 0.3);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .person-portrait {
+            width: 90px; height: 110px;
+            flex-shrink: 0;
+            background: var(--surface-light);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(212, 168, 75, 0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .person-portrait img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(15%) contrast(1.05);
+            transition: filter 0.3s ease;
+        }
+        
+        .person-card:hover .person-portrait img {
+            filter: sepia(0%) contrast(1.1);
+        }
+        
+        .person-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .person-card.compact {
+            padding: 1.25rem;
+        }
+        
+        .person-card.compact .person-portrait {
+            width: 70px;
+            height: 85px;
+        }
+        
+        .person-card.compact .person-info h3 {
+            font-size: 1.1rem;
+        }
+        
+        .person-card.compact .person-info p {
+            font-size: 0.9rem;
+        }
+
+        .person-info { flex: 1; }
+
+        .person-info h3 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .person-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+        }
+
+        .person-info p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quote */
+        .quote-block {
+            position: relative;
+            padding: 2rem;
+            margin: 2.5rem 0;
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.08) 0%, transparent 100%);
+            border-radius: 12px;
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        .quote-block p {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-style: normal;
+            color: var(--accent-gold);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 3rem 0;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-blue), var(--accent-gold));
+            border-radius: 1px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            padding-bottom: 2.5rem;
+        }
+
+        .timeline-item:last-child { padding-bottom: 0; }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 4px;
+            width: 10px; height: 10px;
+            background: var(--night-deep);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+        }
+
+        .timeline-item.highlight-item::before {
+            background: var(--accent-gold);
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .timeline-year {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .timeline-person {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent-blue);
+            background: rgba(96, 136, 192, 0.15);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        /* Simulator sections */
+        .simulator-section {
+            background: linear-gradient(180deg, var(--night-deep) 0%, var(--night-mid) 50%, var(--night-deep) 100%);
+            padding: 8vh 5vw;
+        }
+
+        .simulator-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Controls */
+        .sim-controls {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-row { margin-bottom: 1.25rem; }
+        .control-row:last-child { margin-bottom: 0; }
+
+        .control-label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--surface-light);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sim-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(96, 136, 192, 0.1);
+            border: 1px solid rgba(96, 136, 192, 0.3);
+            color: var(--accent-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .sim-btn:hover {
+            background: rgba(96, 136, 192, 0.2);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .sim-btn.active, .sim-btn.primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: var(--night-deep);
+            font-weight: 500;
+        }
+
+        .datetime-inputs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .datetime-inputs input {
+            flex: 1;
+            padding: 0.6rem 0.8rem;
+            background: var(--surface-light);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .datetime-inputs input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .toggle-row {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .toggle {
+            width: 40px; height: 20px;
+            background: var(--surface-light);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 16px; height: 16px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle.active { background: var(--accent-gold); }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+            background: var(--night-deep);
+        }
+
+        .toggle-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .sim-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sim-stat {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .sim-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .sim-stat-value {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <style>
+        /* Jupiter simulator */
+        .jupiter-viewport {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: radial-gradient(ellipse at center, rgba(30,30,50,0.8) 0%, var(--night-deep) 70%);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .jupiter-system {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+        }
+
+        .jupiter-planet {
+            position: absolute;
+            width: 44px; height: 44px;
+            left: -22px; top: -22px;
+            background: linear-gradient(135deg, #f0e0c0 0%, #d4a84b 40%, #a08040 80%, #705830 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(232, 212, 168, 0.3), inset -10px -5px 20px rgba(0,0,0,0.4);
+        }
+
+        .jupiter-bands {
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .jupiter-bands::before, .jupiter-bands::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(120, 80, 40, 0.5);
+            left: 0;
+        }
+
+        .jupiter-bands::before { top: 35%; }
+        .jupiter-bands::after { top: 55%; }
+
+        .moon {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.15s linear;
+        }
+
+        .moon-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .show-labels .moon-label { opacity: 1; }
+
+        .moon-io { width: 8px; height: 8px; background: var(--io-orange); box-shadow: 0 0 12px var(--io-orange); }
+        .moon-europa { width: 7px; height: 7px; background: var(--europa-ice); box-shadow: 0 0 10px var(--europa-ice); }
+        .moon-ganymede { width: 10px; height: 10px; background: var(--ganymede-grey); box-shadow: 0 0 14px var(--ganymede-grey); }
+        .moon-callisto { width: 9px; height: 9px; background: var(--callisto-brown); box-shadow: 0 0 12px var(--callisto-brown); }
+
+        .moon-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .moon-card {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .moon-card-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+        }
+
+        .moon-card.io .moon-card-dot { background: var(--io-orange); box-shadow: 0 0 8px var(--io-orange); }
+        .moon-card.europa .moon-card-dot { background: var(--europa-ice); box-shadow: 0 0 8px var(--europa-ice); }
+        .moon-card.ganymede .moon-card-dot { background: var(--ganymede-grey); box-shadow: 0 0 8px var(--ganymede-grey); }
+        .moon-card.callisto .moon-card-dot { background: var(--callisto-brown); box-shadow: 0 0 8px var(--callisto-brown); }
+
+        .moon-card h4 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .moon-card .period {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        /* Venus comparison */
+        .venus-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .model-panel {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .model-panel.wrong { border-color: rgba(192, 96, 96, 0.3); }
+        .model-panel.correct { border-color: rgba(96, 160, 96, 0.3); }
+
+        .model-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .model-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .model-panel.wrong .model-subtitle { color: var(--accent-red); }
+        .model-panel.correct .model-subtitle { color: var(--accent-green); }
+
+        .orbit-view {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            margin-bottom: 1rem;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            border: 1px dashed rgba(255,255,255,0.15);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Ptolemy */
+        .ptolemy-earth-pos {
+            position: absolute;
+            width: 16px; height: 16px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent-blue);
+            z-index: 10;
+        }
+
+        .ptolemy-sun {
+            position: absolute;
+            width: 20px; height: 20px;
+            background: #ffdd44;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffdd44;
+            z-index: 5;
+        }
+
+        .ptolemy-venus {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: var(--venus-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--venus-glow);
+            z-index: 8;
+        }
+
+        .epicycle-ring {
+            position: absolute;
+            border: 1px dotted rgba(255,200,100,0.3);
+            border-radius: 50%;
+        }
+
+        /* Copernicus */
+        .copernicus-sun-pos {
+            position: absolute;
+            width: 22px; height: 22px;
+            background: #ffdd44;
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 30px #ffdd44;
+            z-index: 10;
+        }
+
+        .copernicus-earth {
+            position: absolute;
+            width: 14px; height: 14px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--accent-blue);
+            z-index: 8;
+        }
+
+        .copernicus-venus {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: var(--venus-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--venus-glow);
+            z-index: 8;
+        }
+
+        /* Venus appearance */
+        .venus-appearance {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--night-deep);
+            border-radius: 8px;
+        }
+
+        .venus-disk-container {
+            width: 60px; height: 60px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .venus-disk {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: var(--venus-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .venus-shadow {
+            position: absolute;
+            top: 0;
+            width: 50%; height: 100%;
+            background: var(--night-deep);
+            border-radius: 50%;
+            left: 0;
+        }
+
+        .venus-phase-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .venus-size-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        /* Rømer diagram */
+        .roemer-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin: 2rem auto;
+            aspect-ratio: 1;
+        }
+
+        .sun-marker {
+            position: absolute;
+            width: 28px; height: 28px;
+            background: #ffdd44;
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 50px #ffdd44, 0 0 100px rgba(255,221,68,0.3);
+        }
+
+        .earth-marker {
+            position: absolute;
+            width: 14px; height: 14px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--accent-blue);
+            transition: all 0.3s ease;
+        }
+
+        .jupiter-marker {
+            position: absolute;
+            width: 20px; height: 20px;
+            background: var(--jupiter-glow);
+            border-radius: 50%;
+            box-shadow: 0 0 25px var(--jupiter-glow);
+        }
+
+        .light-ray {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,150,0.7), rgba(255,255,150,0.1));
+            transform-origin: left center;
+            pointer-events: none;
+        }
+
+        .roemer-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .roemer-stat {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .roemer-stat .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .roemer-stat .value {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+        }
+
+        .roemer-stat .unit {
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+        }
+
+        /* Exercises */
+        .exercise-card {
+            background: var(--surface);
+            border: 1px solid rgba(212, 168, 75, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-card h3 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.15rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .exercise-card ol { margin-left: 1.25rem; }
+
+        .exercise-card li {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .exercise-card li strong { color: var(--text-primary); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chapter { padding: 8vh 4vw; }
+            .person-card { flex-direction: column; text-align: center; }
+            .person-portrait { margin: 0 auto; }
+            .venus-comparison { grid-template-columns: 1fr; }
+            .moon-grid { grid-template-columns: repeat(2, 1fr); }
+            .roemer-stats { grid-template-columns: 1fr; }
+            .sim-stats { grid-template-columns: 1fr; }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <!-- Navigation -->
+    <nav id="nav">
+        <div class="nav-dot active" data-section="hero"></div>
+        <div class="nav-dot" data-section="galileo"></div>
+        <div class="nav-dot" data-section="jupiter"></div>
+        <div class="nav-dot" data-section="venus"></div>
+        <div class="nav-dot" data-section="kronologi"></div>
+        <div class="nav-dot" data-section="roemer"></div>
+        <div class="nav-dot" data-section="kepler"></div>
+        <div class="nav-dot" data-section="opgaver"></div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="star-field" id="starField"></div>
+        <div class="hero-planets">
+            <div class="hero-planet-jupiter"></div>
+            <div class="hero-planet-venus"></div>
+        </div>
+        
+        <div class="hero-content">
+            <p class="hero-tagline">Et interaktivt læringsmiddel</p>
+            <h1 class="hero-title">Da himlen <em>åbnede sig</em></h1>
+            <p class="hero-intro">
+                I 1610 rettede en italiensk matematiker sit teleskop mod nattehimlen. 
+                Hans observationer af Jupiter og Venus leverede de afgørende beviser 
+                mod et verdensbillede, der havde hersket i 2000 år.
+            </p>
+            <a href="#galileo" class="hero-cta">
+                Start rejsen
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="scroll-hint">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- KAPITEL I: GALILEOS BLIK -->
+    <section class="chapter" id="galileo">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel I</div>
+                <h2 class="chapter-title">Galileos Blik</h2>
+                <p class="chapter-subtitle">Padova, januar 1610</p>
+            </div>
+
+            <div class="narrative fade-in">
+                <p class="lead">
+                    Natten er kold og klar over Padova. I sin have står en 45-årig professor i matematik 
+                    med øjet presset mod et rør af læder og messing.
+                </p>
+                <p>
+                    <strong>Galileo Galilei</strong> har i måneder forbedret det nyligt opfundne 
+                    "kikkert-instrument" fra Holland. Hans version forstørrer 20 gange – 
+                    bedre end noget andet i Europa.
+                </p>
+                <p>
+                    Den <span class="highlight">7. januar</span> retter han det mod Jupiter. 
+                    Ved siden af planeten ser han tre små lyspunkter på en næsten perfekt linje. 
+                    Han antager, at de er fjerne fixstjerner.
+                </p>
+                <p>
+                    Men de følgende nætter vender han tilbage – og lyspunkterne har <strong>flyttet sig</strong>. 
+                    Den 13. januar dukker et fjerde punkt op. Galileo forstår: 
+                    dette er <span class="highlight">måner i kredsløb om Jupiter</span>.
+                </p>
+            </div>
+
+            <div class="person-card fade-in">
+                <div class="person-portrait">
+                    <img src="images/galileo.jpg" alt="Galileo Galilei portræt">
+                </div>
+                <div class="person-info">
+                    <h3>Galileo Galilei</h3>
+                    <div class="person-meta">1564–1642 · Pisa, Italien</div>
+                    <p>
+                        Professor i matematik ved universitetet i Padova. 
+                        Den første til systematisk at rette et teleskop mod nattehimlen 
+                        og publicere sine opdagelser.
+                    </p>
+                </div>
+            </div>
+
+            <div class="quote-block fade-in">
+                <p>
+                    "Jeg har opdaget fire PLANETER, aldrig set fra verdens begyndelse til vore dage, 
+                    deres positioner, og de observationer gjort i de seneste to måneder om deres bevægelser..."
+                </p>
+                <cite>— Galileo Galilei, Sidereus Nuncius, marts 1610</cite>
+            </div>
+
+            <div class="info-card fade-in">
+                <div class="info-card-header">
+                    <div class="info-card-icon">💡</div>
+                    <div class="info-card-title">Hvad beviste Jupiter-månerne?</div>
+                </div>
+                <p>
+                    Opdagelsen viste, at <strong>himmellegemer kan kredse om andet end Jorden</strong>. 
+                    Den afviste også et vigtigt modargument: kritikere havde spurgt, hvordan Jorden 
+                    kunne bevæge sig uden at "tabe" Månen. Jupiter beviste, at en planet i bevægelse 
+                    sagtens kan have måner.
+                </p>
+                <p>
+                    <strong>Men:</strong> Jupiter-månerne modbeviste ikke direkte, at Jorden var universets centrum. 
+                    Selv i et geocentrisk system kunne Jupiter have sine egne måner. 
+                    Det afgørende bevis skulle komme fra en anden planet.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- KAPITEL II: JUPITER SIMULATOR -->
+    <section class="simulator-section" id="jupiter">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel II</div>
+                <h2 class="chapter-title">Jupiters måner</h2>
+                <p class="chapter-subtitle">Observer som Galileo</p>
+            </div>
+
+            <div class="simulator-container fade-in">
+                <div class="jupiter-viewport" id="jupiterViewport">
+                    <div class="jupiter-system" id="jupiterSystem">
+                        <div class="jupiter-planet">
+                            <div class="jupiter-bands"></div>
+                        </div>
+                        <div class="moon moon-io" id="moonIo"><span class="moon-label">Io</span></div>
+                        <div class="moon moon-europa" id="moonEuropa"><span class="moon-label">Europa</span></div>
+                        <div class="moon moon-ganymede" id="moonGanymede"><span class="moon-label">Ganymede</span></div>
+                        <div class="moon moon-callisto" id="moonCallisto"><span class="moon-label">Callisto</span></div>
+                    </div>
+                </div>
+
+                <div class="sim-stats">
+                    <div class="sim-stat">
+                        <div class="sim-stat-label">Dato og tid</div>
+                        <div class="sim-stat-value" id="displayDateTime">12. jan 2026, 19:00</div>
+                    </div>
+                    <div class="sim-stat">
+                        <div class="sim-stat-label">Parallaktisk vinkel</div>
+                        <div class="sim-stat-value"><span id="displayAngle">0</span>°</div>
+                    </div>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="control-row">
+                        <label class="control-label">Dato og tid</label>
+                        <div class="datetime-inputs">
+                            <input type="date" id="inputDate" value="2026-01-12">
+                            <input type="time" id="inputTime" value="19:00">
+                        </div>
+                    </div>
+
+                    <div class="control-row">
+                        <label class="control-label">Tidsskyder (±7 dage)</label>
+                        <input type="range" id="timeSlider" min="-168" max="168" value="0">
+                    </div>
+
+                    <div class="control-row">
+                        <label class="control-label">Parallaktisk vinkel</label>
+                        <input type="range" id="angleSlider" min="-45" max="45" value="0">
+                    </div>
+
+                    <div class="control-row">
+                        <div class="toggle-row">
+                            <div class="toggle-item">
+                                <div class="toggle" id="toggleLabels"></div>
+                                <span class="toggle-label">Vis navne</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-row">
+                        <div class="button-row">
+                            <button class="sim-btn" id="btnPlay">▶ Afspil</button>
+                            <button class="sim-btn" id="btnGalileo">7. jan 1610</button>
+                            <button class="sim-btn" id="btnNow">Nu</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moon-grid">
+                    <div class="moon-card io">
+                        <div class="moon-card-dot"></div>
+                        <h4>Io</h4>
+                        <div class="period">1,77 dage</div>
+                    </div>
+                    <div class="moon-card europa">
+                        <div class="moon-card-dot"></div>
+                        <h4>Europa</h4>
+                        <div class="period">3,55 dage</div>
+                    </div>
+                    <div class="moon-card ganymede">
+                        <div class="moon-card-dot"></div>
+                        <h4>Ganymede</h4>
+                        <div class="period">7,15 dage</div>
+                    </div>
+                    <div class="moon-card callisto">
+                        <div class="moon-card-dot"></div>
+                        <h4>Callisto</h4>
+                        <div class="period">16,69 dage</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- KAPITEL III: VENUS' FASER -->
+    <section class="chapter" id="venus">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel III</div>
+                <h2 class="chapter-title">Venus' faser</h2>
+                <p class="chapter-subtitle">Det afgørende bevis</p>
+            </div>
+
+            <div class="narrative fade-in">
+                <p class="lead">
+                    Fra september 1610 vendte Galileo sit teleskop mod Venus – 
+                    og fandt det bevis, som Jupiter-månerne ikke kunne levere.
+                </p>
+                <p>
+                    Venus viste <span class="highlight">faser som Månen</span>: 
+                    fra tynd segl til halvt oplyst til næsten fuld. 
+                    Og endnu vigtigere: Venus ændrede <span class="highlight">størrelse</span> dramatisk. 
+                    Som segl var den stor, som næsten-fuld var den lille.
+                </p>
+                <p>
+                    Dette var <strong>umuligt</strong> i Ptolemæus' geocentriske system.
+                </p>
+            </div>
+
+            <div class="info-card important fade-in">
+                <div class="info-card-header">
+                    <div class="info-card-icon">⚠️</div>
+                    <div class="info-card-title">Problemet for Ptolemæus</div>
+                </div>
+                <p>
+                    I det ptolemæiske system kredser Venus <strong>altid mellem Jorden og Solen</strong>. 
+                    Den kunne derfor aldrig vise en fuld eller næsten-fuld fase – 
+                    vi ville kun se seglfaser og små faser, og størrelsen ville variere meget lidt.
+                </p>
+                <p>
+                    <strong>Galileos observation:</strong> Venus viser ALLE faser, fra tynd segl til næsten fuld. 
+                    Og den er stor som segl (tæt på), lille som fuld (langt væk). 
+                    Dette kan KUN ske, hvis Venus kredser om Solen.
+                </p>
+            </div>
+
+            <div class="venus-comparison fade-in">
+                <div class="model-panel wrong">
+                    <h3 class="model-title">Ptolemæus' model</h3>
+                    <div class="model-subtitle">Geocentrisk · Modbevist</div>
+                    <div class="orbit-view" id="ptolemyView">
+                        <div class="orbit-ring" style="width: 80%; height: 80%;"></div>
+                        <div class="ptolemy-earth-pos"></div>
+                        <div class="ptolemy-sun" id="ptolemySun"></div>
+                        <div class="epicycle-ring" id="ptolemyEpicycle"></div>
+                        <div class="ptolemy-venus" id="ptolemyVenus"></div>
+                    </div>
+                    <div class="venus-appearance">
+                        <div class="venus-disk-container" id="ptolemyDiskContainer">
+                            <div class="venus-disk" id="ptolemyDisk">
+                                <div class="venus-shadow" id="ptolemyShadow"></div>
+                            </div>
+                        </div>
+                        <div class="venus-phase-label" id="ptolemyPhaseLabel">Segl (25%)</div>
+                        <div class="venus-size-label" id="ptolemySizeLabel">Størrelse: lille variation</div>
+                    </div>
+                </div>
+
+                <div class="model-panel correct">
+                    <h3 class="model-title">Copernicus' model</h3>
+                    <div class="model-subtitle">Heliocentrisk · Bekræftet</div>
+                    <div class="orbit-view" id="copernicusView">
+                        <div class="orbit-ring" style="width: 45%; height: 45%;"></div>
+                        <div class="orbit-ring" style="width: 75%; height: 75%;"></div>
+                        <div class="copernicus-sun-pos"></div>
+                        <div class="copernicus-venus" id="copernicusVenus"></div>
+                        <div class="copernicus-earth" id="copernicusEarth"></div>
+                    </div>
+                    <div class="venus-appearance">
+                        <div class="venus-disk-container" id="copernicusDiskContainer">
+                            <div class="venus-disk" id="copernicusDisk">
+                                <div class="venus-shadow" id="copernicusShadow"></div>
+                            </div>
+                        </div>
+                        <div class="venus-phase-label" id="copernicusPhaseLabel">Segl (15%)</div>
+                        <div class="venus-size-label" id="copernicusSizeLabel">Størrelse: stor (tæt på)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sim-controls fade-in">
+                <div class="control-row">
+                    <label class="control-label">Venus' position i kredsløbet</label>
+                    <input type="range" id="venusSlider" min="0" max="360" value="0">
+                </div>
+                <div class="control-row">
+                    <div class="button-row">
+                        <button class="sim-btn" id="btnVenusPlay">▶ Afspil</button>
+                        <button class="sim-btn" id="btnVenusInferior">Inferior konj.</button>
+                        <button class="sim-btn" id="btnVenusSuperior">Superior konj.</button>
+                        <button class="sim-btn" id="btnVenusElongation">Størst elongation</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card fade-in" style="margin-top: 2rem;">
+                <div class="info-card-header">
+                    <div class="info-card-icon">📜</div>
+                    <div class="info-card-title">En kodet besked</div>
+                </div>
+                <p>
+                    I december 1610 sendte Galileo et krypteret anagram til Kepler: 
+                    <em>"Haec immatura a me iam frustra leguntur o.y."</em> – 
+                    som omstokket blev til <em>"Cynthiae figuras aemulatur mater amorum"</em> 
+                    ("Kærlighedens moder [Venus] efterligner Cynthias [Månens] former").
+                </p>
+                <p>
+                    Galileo ville sikre sig prioriteten, men ikke afsløre opdagelsen før han havde flere data. 
+                    Han publicerede først i 1613.
+                </p>
+            </div>
+
+            <div class="info-card fade-in">
+                <div class="info-card-header">
+                    <div class="info-card-icon">⚖️</div>
+                    <div class="info-card-title">Hvad Venus-faserne beviste – og ikke beviste</div>
+                </div>
+                <p>
+                    Venus' faser var <strong>ødelæggende for Ptolemæus' model</strong> – 
+                    den kunne simpelthen ikke forklare observationerne.
+                </p>
+                <p>
+                    <strong>Men:</strong> Faserne kunne også forklares af <strong>Tycho Brahes kompromis-model</strong>, 
+                    hvor Solen kredser om Jorden, men planeterne kredser om Solen. 
+                    Først med Keplers ellipser og Newtons tyngdekraft blev det fulde heliocentriske billede bekræftet.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- KAPITEL IV: KRONOLOGI -->
+    <section class="chapter" id="kronologi">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel IV</div>
+                <h2 class="chapter-title">Den videnskabelige revolution</h2>
+                <p class="chapter-subtitle">133 år der ændrede alt</p>
+            </div>
+
+            <div class="person-grid fade-in">
+                <div class="person-card compact">
+                    <div class="person-portrait">
+                        <img src="images/copernicus.jpg" alt="Nicolaus Copernicus portræt">
+                    </div>
+                    <div class="person-info">
+                        <h3>Nicolaus Copernicus</h3>
+                        <div class="person-meta">1473–1543 · Torun, Polen</div>
+                        <p>Foreslog det heliocentriske system i <em>De revolutionibus</em>.</p>
+                    </div>
+                </div>
+                <div class="person-card compact">
+                    <div class="person-portrait">
+                        <img src="images/tycho.jpg" alt="Tycho Brahe portræt">
+                    </div>
+                    <div class="person-info">
+                        <h3>Tycho Brahe</h3>
+                        <div class="person-meta">1546–1601 · Skåne, Danmark</div>
+                        <p>Historiens største nøgne-øje-astronom. Præcise observationer.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline fade-in">
+                <div class="timeline-item">
+                    <div class="timeline-year">1543</div>
+                    <div class="timeline-title">De revolutionibus udgives</div>
+                    <div class="timeline-desc">
+                        Nicolaus Copernicus foreslår, at Solen – ikke Jorden – er i centrum. 
+                        Bogen udgives kort før hans død, med en forsigtig indledning der kalder modellen "hypotetisk".
+                    </div>
+                    <span class="timeline-person">Copernicus</span>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1572</div>
+                    <div class="timeline-title">En supernova i Cassiopeia</div>
+                    <div class="timeline-desc">
+                        Tycho Brahe observerer en "ny stjerne". Ved præcise målinger beviser han, 
+                        at den befinder sig blandt fixstjernerne. Aristoteles' uforanderlige himmel er en myte.
+                    </div>
+                    <span class="timeline-person">Tycho Brahe</span>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1577</div>
+                    <div class="timeline-title">En komet krydser planetbanerne</div>
+                    <div class="timeline-desc">
+                        Tycho dokumenterer en komets bane gennem flere planetsfærer. 
+                        De "krystallinske sfærer" kan ikke eksistere som solide objekter.
+                    </div>
+                    <span class="timeline-person">Tycho Brahe</span>
+                </div>
+
+                <div class="timeline-item highlight-item">
+                    <div class="timeline-year">Januar 1610</div>
+                    <div class="timeline-title">Jupiters måner opdages</div>
+                    <div class="timeline-desc">
+                        Galileo observerer fire lyspunkter, der kredser om Jupiter. 
+                        Ikke alt i universet drejer om Jorden – men modellen er endnu ikke afgjort.
+                    </div>
+                    <span class="timeline-person">Galileo</span>
+                </div>
+
+                <div class="timeline-item highlight-item">
+                    <div class="timeline-year">September–dec 1610</div>
+                    <div class="timeline-title">Venus' faser observeres</div>
+                    <div class="timeline-desc">
+                        Galileo ser Venus gennemgå faser fra segl til næsten fuld. 
+                        Dette er <strong>umuligt</strong> i Ptolemæus' model og beviser, at Venus kredser om Solen.
+                    </div>
+                    <span class="timeline-person">Galileo</span>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1609–1619</div>
+                    <div class="timeline-title">Keplers love formuleres</div>
+                    <div class="timeline-desc">
+                        Ved at analysere Tycho Brahes data opdager Kepler, at planeterne bevæger sig i ellipser. 
+                        Endelig passer modellen til observationerne.
+                    </div>
+                    <span class="timeline-person">Kepler</span>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1676</div>
+                    <div class="timeline-title">Lysets hastighed måles</div>
+                    <div class="timeline-desc">
+                        Ole Rømer opdager uregelmæssigheder i Ios formørkelser og konkluderer, 
+                        at lyset har en endelig hastighed – ca. 220.000 km/s.
+                    </div>
+                    <span class="timeline-person">Ole Rømer</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- KAPITEL V: RØMER -->
+    <section class="simulator-section" id="roemer">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel V</div>
+                <h2 class="chapter-title">Lysets hastighed</h2>
+                <p class="chapter-subtitle">Paris, 1676</p>
+            </div>
+
+            <div class="person-card fade-in">
+                <div class="person-portrait">
+                    <img src="images/roemer.jpg" alt="Ole Rømer portræt">
+                </div>
+                <div class="person-info">
+                    <h3>Ole Rømer</h3>
+                    <div class="person-meta">1644–1710 · Aarhus, Danmark</div>
+                    <p>
+                        Dansk astronom ved Paris' observatorium. 
+                        Opdagede at lyset har en endelig hastighed ved at studere Ios formørkelser.
+                    </p>
+                </div>
+            </div>
+
+            <div class="narrative fade-in">
+                <p>
+                    66 år efter Galileos opdagelse studerer Ole Rømer <span class="highlight">formørkelserne af Io</span>. 
+                    Han opdager, at de ikke kommer når de burde.
+                </p>
+                <p>
+                    Når Jorden er <strong>tæt på Jupiter</strong>, kommer formørkelserne for tidligt. 
+                    Når Jorden er <strong>langt væk</strong>, kommer de for sent – op til 22 minutter!
+                </p>
+                <p>
+                    Rømer indså: forsinkelsen skyldes, at <span class="highlight">lyset tager tid</span> om at rejse.
+                </p>
+            </div>
+
+            <div class="roemer-diagram fade-in" id="roemerDiagram">
+                <div class="orbit-ring" style="width: 35%; height: 35%;"></div>
+                <div class="orbit-ring" style="width: 85%; height: 85%;"></div>
+                <div class="sun-marker"></div>
+                <div class="earth-marker" id="roemerEarth"></div>
+                <div class="jupiter-marker" id="roemerJupiter"></div>
+                <div class="light-ray" id="lightRay"></div>
+            </div>
+
+            <div class="sim-controls fade-in" style="max-width: 450px; margin: 0 auto;">
+                <div class="control-row">
+                    <label class="control-label">Jordens position</label>
+                    <input type="range" id="roemerSlider" min="0" max="12" value="0" step="0.1">
+                </div>
+                <div class="control-row">
+                    <div class="button-row" style="justify-content: center;">
+                        <button class="sim-btn" id="btnOpposition">Opposition</button>
+                        <button class="sim-btn" id="btnConjunction">Konjunktion</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="roemer-stats fade-in">
+                <div class="roemer-stat">
+                    <div class="label">Afstand</div>
+                    <div class="value"><span id="roemerDist">4.2</span> <span class="unit">AU</span></div>
+                </div>
+                <div class="roemer-stat">
+                    <div class="label">Lysets rejsetid</div>
+                    <div class="value"><span id="roemerTime">35</span> <span class="unit">min</span></div>
+                </div>
+                <div class="roemer-stat">
+                    <div class="label">Forsinkelse</div>
+                    <div class="value"><span id="roemerDelay">0</span> <span class="unit">min</span></div>
+                </div>
+            </div>
+
+            <div class="info-card fade-in" style="margin-top: 2rem;">
+                <div class="info-card-header">
+                    <div class="info-card-icon">⚡</div>
+                    <div class="info-card-title">Rømers resultat</div>
+                </div>
+                <p>
+                    Rømer beregnede lysets hastighed til ca. <strong>220.000 km/s</strong> – 
+                    kun 25% lavere end den moderne værdi på 299.792 km/s. 
+                    En bemærkelsesværdig præstation med 1670'ernes udstyr.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- KAPITEL VI: KEPLER -->
+    <section class="chapter" id="kepler">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel VI</div>
+                <h2 class="chapter-title">Ellipserne</h2>
+                <p class="chapter-subtitle">Modellen der endelig passede</p>
+            </div>
+
+            <div class="person-card fade-in">
+                <div class="person-portrait">
+                    <img src="images/kepler.jpg" alt="Johannes Kepler portræt">
+                </div>
+                <div class="person-info">
+                    <h3>Johannes Kepler</h3>
+                    <div class="person-meta">1571–1630 · Weil der Stadt, Tyskland</div>
+                    <p>
+                        Matematiker og astronom. Arvede Tycho Brahes præcise observationsdata 
+                        og brugte dem til at opdage planetbanernes sande form.
+                    </p>
+                </div>
+            </div>
+
+            <div class="narrative fade-in">
+                <p>
+                    Hverken Copernicus eller Tycho kunne forudsige planeternes positioner præcist. 
+                    Begge antog, at banerne var <span class="highlight">perfekte cirkler</span> – 
+                    en arv fra den græske filosofi.
+                </p>
+                <p>
+                    Kepler, bevæbnet med Tychos data, prøvede i årevis at få cirkelmodeller til at passe. 
+                    Endelig gjorde han den afgørende erkendelse: 
+                    banerne er ikke cirkler, men <span class="highlight">ellipser</span>.
+                </p>
+                <p>
+                    Med denne ene ændring passede modellen. 
+                    Keplers tre love beskriver stadig planetbevægelser præcist i dag.
+                </p>
+            </div>
+
+            <div class="info-card fade-in">
+                <div class="info-card-header">
+                    <div class="info-card-icon">📐</div>
+                    <div class="info-card-title">Keplers tre love</div>
+                </div>
+                <p><strong>1. lov (1609):</strong> Planeterne bevæger sig i ellipser med Solen i det ene brændpunkt.</p>
+                <p><strong>2. lov (1609):</strong> En linje fra Solen til en planet overstryder lige store arealer på lige lang tid (planeten bevæger sig hurtigere tæt på Solen).</p>
+                <p><strong>3. lov (1619):</strong> Kvadratet på omløbstiden er proportionalt med kubikken på afstanden til Solen.</p>
+            </div>
+
+            <div class="quote-block fade-in">
+                <p>
+                    "Jeg målte himlen, nu måler jeg skyggerne. 
+                    Sindet var himmelsk, legemets skygge hviler her."
+                </p>
+                <cite>— Keplers selvskrevne gravskrift</cite>
+            </div>
+        </div>
+    </section>
+
+    <!-- KAPITEL VII: OPGAVER -->
+    <section class="chapter" id="opgaver">
+        <div class="chapter-inner">
+            <div class="chapter-header fade-in">
+                <div class="chapter-number">Kapitel VII</div>
+                <h2 class="chapter-title">Elevopgaver</h2>
+                <p class="chapter-subtitle">Test din forståelse</p>
+            </div>
+
+            <div class="exercise-card fade-in">
+                <h3>📋 Del 1: Jupiter-månerne</h3>
+                <ol>
+                    <li>Brug Jupiter-simulatoren til at se systemet den <strong>7. januar 1610 kl. 18:00</strong>. 
+                    Hvor mange måner kunne Galileo se den nat? Hvorfor ikke alle fire?</li>
+                    <li>Hvilken måne bevæger sig hurtigst? Beregn hvor mange grader Io tilbagelægger pr. time.</li>
+                    <li>Forklar hvorfor Jupiter-månerne <strong>ikke</strong> direkte modbeviste det geocentriske verdensbillede.</li>
+                </ol>
+            </div>
+
+            <div class="exercise-card fade-in">
+                <h3>📋 Del 2: Venus' faser</h3>
+                <ol>
+                    <li>Brug Venus-simulatoren til at sammenligne de to modeller. 
+                    Hvad er den <strong>største forskel</strong> på Venus' udseende?</li>
+                    <li>Forklar med egne ord, hvorfor Venus aldrig kan være "fuld" i Ptolemæus' model.</li>
+                    <li>Hvorfor var Venus' faser ikke et bevis <em>mod</em> Tycho Brahes model? 
+                    Tegn Tychos model og vis, at Venus stadig ville vise alle faser.</li>
+                </ol>
+            </div>
+
+            <div class="exercise-card fade-in">
+                <h3>📋 Del 3: Rømer og lysets hastighed</h3>
+                <ol>
+                    <li>Brug Rømer-diagrammet til at finde afstanden til Jupiter ved opposition og konjunktion. 
+                    Hvad er forskellen i AU og i km?</li>
+                    <li>Hvis Ios formørkelse er 22 minutter "forsinket" ved konjunktion vs. opposition, 
+                    og forskellen i afstand er ca. 2 AU: Beregn lysets hastighed.</li>
+                    <li>Hvorfor valgte Rømer netop <strong>Io</strong> til sine målinger og ikke Callisto?</li>
+                </ol>
+            </div>
+
+            <div class="exercise-card fade-in">
+                <h3>📋 Del 4: Syntese</h3>
+                <ol>
+                    <li>Rangér Galileos opdagelser efter deres <strong>bevismæssige vægt</strong> mod det geocentriske system. 
+                    Begrund din rangering.</li>
+                    <li>Hvorfor var <strong>ellipser</strong> den afgørende nøgle for Kepler? 
+                    Hvad var problemet med cirkelbaner?</li>
+                    <li>Forklar med egne ord hvordan Tycho, Galileo og Kepler hver især bidrog til den videnskabelige revolution.</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            Udarbejdet som undervisningsmateriale til naturgeografi og fysik<br>
+            <a href="https://geo.sg.dk">geo.sg.dk</a>
+        </p>
+    </footer>
+    <script>
+        // =====================================================
+        // STJERNEBAGGRUND
+        // =====================================================
+        function createStars() {
+            const field = document.getElementById('starField');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                field.appendChild(star);
+            }
+        }
+        createStars();
+
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+        const navDots = document.querySelectorAll('.nav-dot');
+        const sections = ['hero', 'galileo', 'jupiter', 'venus', 'kronologi', 'roemer', 'kepler', 'opgaver'];
+
+        function updateNav() {
+            const scrollPos = window.scrollY + window.innerHeight / 3;
+            sections.forEach((id, index) => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const top = section.offsetTop;
+                    const bottom = top + section.offsetHeight;
+                    if (scrollPos >= top && scrollPos < bottom) {
+                        navDots.forEach(d => d.classList.remove('active'));
+                        navDots[index].classList.add('active');
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateNav);
+        navDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                document.getElementById(sections[index]).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // =====================================================
+        // SCROLL ANIMATIONS
+        // =====================================================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // =====================================================
+        // JUPITER SIMULATOR
+        // =====================================================
+        const MOON_DATA = {
+            io: { period: 1.769, semiMajorAxis: 75 },
+            europa: { period: 3.551, semiMajorAxis: 105 },
+            ganymede: { period: 7.155, semiMajorAxis: 145 },
+            callisto: { period: 16.689, semiMajorAxis: 195 }
+        };
+
+        const J2000 = new Date('2000-01-01T12:00:00Z');
+        const INITIAL_PHASES = { io: 0, europa: Math.PI * 0.3, ganymede: Math.PI * 0.8, callisto: Math.PI * 1.5 };
+
+        let simTime = new Date();
+        let baseTime = new Date();
+        let parallacticAngle = 0;
+        let isPlaying = false;
+        let playInterval = null;
+
+        function calculateMoonPosition(moonName, time) {
+            const moon = MOON_DATA[moonName];
+            const daysSinceEpoch = (time - J2000) / (1000 * 60 * 60 * 24);
+            const angle = INITIAL_PHASES[moonName] + (2 * Math.PI * daysSinceEpoch / moon.period);
+            const x = moon.semiMajorAxis * Math.sin(angle);
+            const isBehind = Math.cos(angle) < 0 && Math.abs(x) < 25;
+            return { x, isBehind };
+        }
+
+        function updateJupiterSimulator() {
+            const system = document.getElementById('jupiterSystem');
+            system.style.transform = `rotate(${parallacticAngle}deg)`;
+            
+            Object.keys(MOON_DATA).forEach(moonName => {
+                const moonEl = document.getElementById('moon' + moonName.charAt(0).toUpperCase() + moonName.slice(1));
+                if (!moonEl) return;
+                const pos = calculateMoonPosition(moonName, simTime);
+                moonEl.style.left = pos.x + 'px';
+                moonEl.style.top = '0px';
+                moonEl.style.opacity = pos.isBehind ? '0.25' : '1';
+            });
+            
+            const options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('displayDateTime').textContent = simTime.toLocaleDateString('da-DK', options);
+            document.getElementById('displayAngle').textContent = parallacticAngle.toFixed(0);
+        }
+
+        document.getElementById('inputDate').addEventListener('change', updateFromInputs);
+        document.getElementById('inputTime').addEventListener('change', updateFromInputs);
+
+        function updateFromInputs() {
+            const dateStr = document.getElementById('inputDate').value;
+            const timeStr = document.getElementById('inputTime').value;
+            simTime = new Date(dateStr + 'T' + timeStr);
+            baseTime = new Date(simTime);
+            document.getElementById('timeSlider').value = 0;
+            updateJupiterSimulator();
+        }
+
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            const hours = parseInt(this.value);
+            simTime = new Date(baseTime.getTime() + hours * 60 * 60 * 1000);
+            updateJupiterSimulator();
+        });
+
+        document.getElementById('angleSlider').addEventListener('input', function() {
+            parallacticAngle = parseFloat(this.value);
+            updateJupiterSimulator();
+        });
+
+        document.getElementById('toggleLabels').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.getElementById('jupiterSystem').classList.toggle('show-labels');
+        });
+
+        document.getElementById('btnPlay').addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            this.textContent = isPlaying ? '⏸ Pause' : '▶ Afspil';
+            this.classList.toggle('active', isPlaying);
+            
+            if (isPlaying) {
+                playInterval = setInterval(() => {
+                    simTime = new Date(simTime.getTime() + 30 * 60 * 1000);
+                    updateJupiterSimulator();
+                }, 100);
+            } else {
+                clearInterval(playInterval);
+            }
+        });
+
+        document.getElementById('btnGalileo').addEventListener('click', function() {
+            simTime = new Date('1610-01-07T18:00:00');
+            baseTime = new Date(simTime);
+            document.getElementById('inputDate').value = '1610-01-07';
+            document.getElementById('inputTime').value = '18:00';
+            document.getElementById('timeSlider').value = 0;
+            updateJupiterSimulator();
+        });
+
+        document.getElementById('btnNow').addEventListener('click', function() {
+            simTime = new Date();
+            baseTime = new Date();
+            document.getElementById('inputDate').value = simTime.toISOString().split('T')[0];
+            document.getElementById('inputTime').value = simTime.toTimeString().slice(0,5);
+            document.getElementById('timeSlider').value = 0;
+            updateJupiterSimulator();
+        });
+
+        // =====================================================
+        // VENUS FASE SIMULATOR
+        // =====================================================
+        let venusAngle = 0;
+        let venusPlaying = false;
+        let venusInterval = null;
+
+        function updateVenusSimulator() {
+            const angleRad = venusAngle * Math.PI / 180;
+            
+            // === PTOLEMÆUS MODEL ===
+            const ptolemyView = document.getElementById('ptolemyView');
+            const pRect = ptolemyView.getBoundingClientRect();
+            const pCenterX = pRect.width / 2;
+            const pCenterY = pRect.height / 2;
+            
+            const sunOrbitRadius = pRect.width * 0.35;
+            const sunAngle = venusAngle * Math.PI / 180 * 0.3;
+            const sunX = pCenterX + sunOrbitRadius * Math.cos(sunAngle) - 10;
+            const sunY = pCenterY + sunOrbitRadius * Math.sin(sunAngle) - 10;
+            
+            document.getElementById('ptolemySun').style.left = sunX + 'px';
+            document.getElementById('ptolemySun').style.top = sunY + 'px';
+            
+            const epicycleRadius = 25;
+            const venusEpicycleAngle = venusAngle * Math.PI / 180 * 2;
+            const epicycleCenterX = (pCenterX + sunX + 10) / 2;
+            const epicycleCenterY = (pCenterY + sunY + 10) / 2;
+            
+            const ptolemyVenusX = epicycleCenterX + epicycleRadius * Math.sin(venusEpicycleAngle) - 5;
+            const ptolemyVenusY = epicycleCenterY - epicycleRadius * Math.cos(venusEpicycleAngle) * 0.3 - 5;
+            
+            document.getElementById('ptolemyVenus').style.left = ptolemyVenusX + 'px';
+            document.getElementById('ptolemyVenus').style.top = ptolemyVenusY + 'px';
+            
+            const epicycleEl = document.getElementById('ptolemyEpicycle');
+            epicycleEl.style.width = epicycleRadius * 2 + 'px';
+            epicycleEl.style.height = epicycleRadius * 0.6 + 'px';
+            epicycleEl.style.left = (epicycleCenterX - epicycleRadius) + 'px';
+            epicycleEl.style.top = (epicycleCenterY - epicycleRadius * 0.3) + 'px';
+            
+            const ptolemyPhase = 0.15 + 0.25 * (0.5 + 0.5 * Math.sin(venusEpicycleAngle));
+            updateVenusAppearance('ptolemy', ptolemyPhase, 0.7 + 0.15 * Math.sin(venusEpicycleAngle));
+            
+            // === COPERNICUS MODEL ===
+            const copernicusView = document.getElementById('copernicusView');
+            const cRect = copernicusView.getBoundingClientRect();
+            const cCenterX = cRect.width / 2;
+            const cCenterY = cRect.height / 2;
+            
+            const venusOrbitRadius = cRect.width * 0.18;
+            const cVenusX = cCenterX + venusOrbitRadius * Math.cos(angleRad) - 5;
+            const cVenusY = cCenterY + venusOrbitRadius * Math.sin(angleRad) - 5;
+            
+            document.getElementById('copernicusVenus').style.left = cVenusX + 'px';
+            document.getElementById('copernicusVenus').style.top = cVenusY + 'px';
+            
+            const earthOrbitRadius = cRect.width * 0.32;
+            const earthAngle = angleRad * 0.615;
+            const earthX = cCenterX + earthOrbitRadius * Math.cos(earthAngle) - 7;
+            const earthY = cCenterY + earthOrbitRadius * Math.sin(earthAngle) - 7;
+            
+            document.getElementById('copernicusEarth').style.left = earthX + 'px';
+            document.getElementById('copernicusEarth').style.top = earthY + 'px';
+            
+            const vx = cVenusX + 5 - cCenterX;
+            const vy = cVenusY + 5 - cCenterY;
+            const ex = earthX + 7 - cCenterX;
+            const ey = earthY + 7 - cCenterY;
+            
+            const venusToSunAngle = Math.atan2(-vy, -vx);
+            const venusToEarthAngle = Math.atan2(ey - vy, ex - vx);
+            const phaseAngle = venusToEarthAngle - venusToSunAngle;
+            
+            const copernicusPhase = (1 + Math.cos(phaseAngle)) / 2;
+            
+            const distToEarth = Math.sqrt(Math.pow(ex - vx, 2) + Math.pow(ey - vy, 2));
+            const maxDist = venusOrbitRadius + earthOrbitRadius;
+            const minDist = Math.abs(earthOrbitRadius - venusOrbitRadius);
+            const sizeRatio = 1 - (distToEarth - minDist) / (maxDist - minDist);
+            
+            updateVenusAppearance('copernicus', copernicusPhase, 0.35 + sizeRatio * 0.65);
+        }
+
+        function updateVenusAppearance(model, phase, size) {
+            const container = document.getElementById(model + 'DiskContainer');
+            const shadow = document.getElementById(model + 'Shadow');
+            const phaseLabel = document.getElementById(model + 'PhaseLabel');
+            const sizeLabel = document.getElementById(model + 'SizeLabel');
+            
+            const baseSize = 50;
+            const actualSize = baseSize * size;
+            container.style.width = actualSize + 'px';
+            container.style.height = actualSize + 'px';
+            
+            if (phase <= 0.5) {
+                const shadowWidth = (1 - phase * 2) * 100;
+                shadow.style.left = 'auto';
+                shadow.style.right = '0';
+                shadow.style.width = shadowWidth + '%';
+                shadow.style.borderRadius = '0 50% 50% 0';
+            } else {
+                const shadowWidth = ((1 - phase) * 2) * 100;
+                shadow.style.left = '0';
+                shadow.style.right = 'auto';
+                shadow.style.width = shadowWidth + '%';
+                shadow.style.borderRadius = '50% 0 0 50%';
+            }
+            
+            let phaseName = '';
+            if (phase < 0.1) phaseName = 'Ny';
+            else if (phase < 0.35) phaseName = 'Segl';
+            else if (phase < 0.65) phaseName = 'Halvt oplyst';
+            else if (phase < 0.9) phaseName = 'Trekvart';
+            else phaseName = 'Fuld';
+            
+            phaseLabel.textContent = phaseName + ' (' + Math.round(phase * 100) + '%)';
+            
+            if (size > 0.7) sizeLabel.textContent = 'Størrelse: stor (tæt på)';
+            else if (size > 0.5) sizeLabel.textContent = 'Størrelse: mellem';
+            else sizeLabel.textContent = 'Størrelse: lille (langt væk)';
+        }
+
+        document.getElementById('venusSlider').addEventListener('input', function() {
+            venusAngle = parseFloat(this.value);
+            updateVenusSimulator();
+        });
+
+        document.getElementById('btnVenusPlay').addEventListener('click', function() {
+            venusPlaying = !venusPlaying;
+            this.textContent = venusPlaying ? '⏸ Pause' : '▶ Afspil';
+            this.classList.toggle('active', venusPlaying);
+            
+            if (venusPlaying) {
+                venusInterval = setInterval(() => {
+                    venusAngle = (venusAngle + 2) % 360;
+                    document.getElementById('venusSlider').value = venusAngle;
+                    updateVenusSimulator();
+                }, 50);
+            } else {
+                clearInterval(venusInterval);
+            }
+        });
+
+        document.getElementById('btnVenusInferior').addEventListener('click', function() {
+            venusAngle = 0;
+            document.getElementById('venusSlider').value = 0;
+            updateVenusSimulator();
+        });
+
+        document.getElementById('btnVenusSuperior').addEventListener('click', function() {
+            venusAngle = 180;
+            document.getElementById('venusSlider').value = 180;
+            updateVenusSimulator();
+        });
+
+        document.getElementById('btnVenusElongation').addEventListener('click', function() {
+            venusAngle = 90;
+            document.getElementById('venusSlider').value = 90;
+            updateVenusSimulator();
+        });
+
+        // =====================================================
+        // RØMER DIAGRAM
+        // =====================================================
+        function updateRoemer(month) {
+            const diagram = document.getElementById('roemerDiagram');
+            const rect = diagram.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const earthOrbit = rect.width * 0.175;
+            const jupiterOrbit = rect.width * 0.425;
+            
+            const earthAngle = (month / 12) * 2 * Math.PI - Math.PI / 2;
+            const earthX = centerX + earthOrbit * Math.cos(earthAngle) - 7;
+            const earthY = centerY + earthOrbit * Math.sin(earthAngle) - 7;
+            
+            document.getElementById('roemerEarth').style.left = earthX + 'px';
+            document.getElementById('roemerEarth').style.top = earthY + 'px';
+            
+            const jupiterAngle = -Math.PI / 2;
+            const jupiterX = centerX + jupiterOrbit * Math.cos(jupiterAngle) - 10;
+            const jupiterY = centerY + jupiterOrbit * Math.sin(jupiterAngle) - 10;
+            
+            document.getElementById('roemerJupiter').style.left = jupiterX + 'px';
+            document.getElementById('roemerJupiter').style.top = jupiterY + 'px';
+            
+            const dx = (earthX + 7) - (jupiterX + 10);
+            const dy = (earthY + 7) - (jupiterY + 10);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            
+            const lightRay = document.getElementById('lightRay');
+            lightRay.style.left = (jupiterX + 10) + 'px';
+            lightRay.style.top = (jupiterY + 10) + 'px';
+            lightRay.style.width = distance + 'px';
+            lightRay.style.transform = `rotate(${angle}deg)`;
+            
+            const minDist = jupiterOrbit - earthOrbit;
+            const maxDist = jupiterOrbit + earthOrbit;
+            const distAU = 4.2 + (distance - minDist) / (maxDist - minDist) * 1.8;
+            const lightTime = distAU * 8.3;
+            const delay = lightTime - (4.2 * 8.3);
+            
+            document.getElementById('roemerDist').textContent = distAU.toFixed(1);
+            document.getElementById('roemerTime').textContent = Math.round(lightTime);
+            document.getElementById('roemerDelay').textContent = (delay > 0 ? '+' : '') + Math.round(delay);
+        }
+
+        document.getElementById('roemerSlider').addEventListener('input', function() {
+            updateRoemer(parseFloat(this.value));
+        });
+
+        document.getElementById('btnOpposition').addEventListener('click', function() {
+            document.getElementById('roemerSlider').value = 6;
+            updateRoemer(6);
+        });
+
+        document.getElementById('btnConjunction').addEventListener('click', function() {
+            document.getElementById('roemerSlider').value = 0;
+            updateRoemer(0);
+        });
+
+        // =====================================================
+        // INIT
+        // =====================================================
+        updateJupiterSimulator();
+        setTimeout(() => {
+            updateVenusSimulator();
+            updateRoemer(0);
+        }, 100);
+        
+        window.addEventListener('resize', () => {
+            updateVenusSimulator();
+            updateRoemer(parseFloat(document.getElementById('roemerSlider').value));
+        });
+    </script>
+</body>
+</html>

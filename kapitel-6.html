@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapitel VI: Keplers ellipser – Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .laws-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .law-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .law-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-warm));
+        }
+        
+        .law-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+        
+        .law-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        
+        .law-explanation {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        .law-formula {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--surface-elevated);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+        }
+        
+        .ellipse-illustration {
+            background: var(--surface-elevated);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .ellipse-svg {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main class="main-content">
+            <header class="chapter-header fade-in">
+                <div class="chapter-label">Kapitel VI</div>
+                <h1 class="chapter-title">Keplers ellipser</h1>
+                <p class="chapter-subtitle">Modellen der endelig passede</p>
+            </header>
+            
+            <!-- STORY SECTION -->
+            <section class="story-section fade-in fade-in-delay-1">
+                <p class="lead">
+                    Selv efter Copernicus' revolution var der et problem: forudsigelserne passede 
+                    ikke helt med observationerne. Alle – fra Ptolemæus til Copernicus – havde antaget, 
+                    at planetbanerne var <strong>cirkler</strong>.
+                </p>
+                <p>
+                    <strong>Johannes Kepler</strong> brugte otte år på at analysere Tycho Brahes 
+                    præcise observationer af Mars. Han prøvede alle mulige cirkelkombinationer – 
+                    ingen virkede. Til sidst indså han sandheden: 
+                    <span class="highlight">planetbanerne er ellipser, ikke cirkler</span>.
+                </p>
+            </section>
+            
+            <!-- QUOTE -->
+            <blockquote class="quote-block fade-in">
+                <p>
+                    "Hvis jeg havde troet, at vi kunne ignorere disse otte bueminutter, 
+                    ville jeg have lappet min hypotese... 
+                    Men fordi de ikke kan ignoreres, har disse otte minutter alene 
+                    ført til en total reformation af astronomien."
+                </p>
+                <cite>— Johannes Kepler, Astronomia Nova, 1609</cite>
+            </blockquote>
+            
+            <!-- KEPLER'S LAWS -->
+            <div class="laws-grid fade-in fade-in-delay-2">
+                <div class="law-card">
+                    <div class="law-number">Keplers 1. lov</div>
+                    <h3 class="law-title">Ellipseloven</h3>
+                    <p class="law-explanation">
+                        Planeterne bevæger sig i ellipser med Solen i det ene brændpunkt.
+                        En ellipse er en "flad cirkel" med to brændpunkter. 
+                        Jo mere elliptisk banen er, jo mere excentrik er den.
+                    </p>
+                </div>
+                
+                <div class="law-card">
+                    <div class="law-number">Keplers 2. lov</div>
+                    <h3 class="law-title">Arealloven</h3>
+                    <p class="law-explanation">
+                        En linje fra planeten til Solen overstrygerer lige store arealer på lige lang tid. 
+                        Det betyder, at planeten bevæger sig hurtigere, når den er tæt på Solen, 
+                        og langsommere, når den er langt væk.
+                    </p>
+                </div>
+                
+                <div class="law-card">
+                    <div class="law-number">Keplers 3. lov</div>
+                    <h3 class="law-title">Harmoniloven</h3>
+                    <p class="law-explanation">
+                        Kvadratet på omløbstiden er proportional med tredjepotensen af den gennemsnitlige 
+                        afstand til Solen. Denne lov forbinder alle planeterne i ét harmonisk system.
+                    </p>
+                    <div class="law-formula">T² = k · a³</div>
+                </div>
+            </div>
+            
+            <!-- TYCHO CONNECTION -->
+            <section class="story-section fade-in">
+                <p>
+                    Keplers gennembrud var kun muligt på grund af <strong>Tycho Brahes data</strong>. 
+                    Tycho havde i 20 år på Hven indsamlet de mest præcise observationer af planeterne 
+                    nogensinde – så præcise, at Kepler kunne se, når cirkelmodellen var 8 bueminutter 
+                    ved siden af. Ingen tidligere observationer havde været gode nok.
+                </p>
+            </section>
+            
+            <!-- FACTS -->
+            <section class="facts-section fade-in">
+                <div class="facts-header">
+                    <div class="facts-icon">i</div>
+                    <div class="facts-title">Hvorfor er ellipser vigtige?</div>
+                </div>
+                <p>
+                    Cirkler havde været brugt i 2000 år, fordi de var "perfekte". 
+                    Keplers ellipser var en revolution – ikke bare i astronomien, men i 
+                    videnskabens tilgang til naturen.
+                </p>
+                <p>
+                    <strong>Naturen behøver ikke følge menneskets æstetiske idealer.</strong> 
+                    Virkeligheden trumfer elegance. Denne erkendelse var grundlæggende for 
+                    den moderne videnskabs fødsel.
+                </p>
+            </section>
+            
+            <section class="facts-section important fade-in">
+                <div class="facts-header">
+                    <div class="facts-icon">!</div>
+                    <div class="facts-title">Newton forklarede hvorfor</div>
+                </div>
+                <p>
+                    Kepler beskrev <strong>hvordan</strong> planeterne bevæger sig, men ikke hvorfor. 
+                    Det var først Isaac Newton i 1687, der viste, at ellipserne er en naturlig 
+                    konsekvens af <strong>tyngdekraften</strong> – en kraft der aftager med 
+                    kvadratet på afstanden.
+                </p>
+            </section>
+            
+            <!-- PAGE NAVIGATION -->
+            <nav class="page-nav">
+                <a href="kapitel-5.html" class="page-nav-btn prev">
+                    <span class="arrow">←</span>
+                    <div>
+                        <div class="label">Forrige</div>
+                        <div class="title">Lysets hastighed</div>
+                    </div>
+                </a>
+                
+                <div class="chapter-indicator">
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot active"></span>
+                    <span class="chapter-dot"></span>
+                </div>
+                
+                <a href="kapitel-7.html" class="page-nav-btn next">
+                    <div>
+                        <div class="label">Næste</div>
+                        <div class="title">Elevopgaver</div>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+        </main>
+        
+        <!-- PORTRAIT SIDEBAR -->
+        <aside class="portrait-sidebar">
+            <div class="portrait-card active">
+                <img src="images/kepler.jpg" alt="Johannes Kepler" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Johannes Kepler</h3>
+                    <div class="portrait-dates">1571–1630 · Weil</div>
+                </div>
+            </div>
+            
+            <div class="portrait-card">
+                <img src="images/tycho.jpg" alt="Tycho Brahe" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Tycho Brahe</h3>
+                    <div class="portrait-dates">1546–1601 · Knudstrup</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>

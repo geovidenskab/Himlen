@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Index-specific styles */
+        .index-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(80, 40, 100, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 75% 70%, rgba(40, 60, 120, 0.12) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+        }
+        
+        .hero-tagline {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.3s forwards;
+        }
+        
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 5.5rem);
+            font-weight: 500;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.5s forwards;
+        }
+        
+        .hero-title em {
+            font-style: italic;
+            background: linear-gradient(135deg, var(--accent-warm), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-intro {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.7s forwards;
+        }
+        
+        .hero-planets {
+            position: absolute;
+            bottom: 5%;
+            right: 5%;
+            width: 45vw;
+            max-width: 450px;
+            aspect-ratio: 1;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+        
+        .hero-planet {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+        
+        .hero-planet.jupiter {
+            bottom: 0;
+            right: 0;
+            width: 70%;
+            aspect-ratio: 1;
+            background: radial-gradient(ellipse at 30% 30%, #f0e0c0 0%, #c8a060 40%, #806030 80%, #403020 100%);
+        }
+        
+        .hero-planet.venus {
+            top: 10%;
+            left: 10%;
+            width: 25%;
+            aspect-ratio: 1;
+            background: radial-gradient(ellipse at 30% 30%, #fffef0 0%, #f0e8c0 60%, #d0c090 100%);
+        }
+        
+        /* Star field */
+        .star-field {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Chapter grid */
+        .chapters-section {
+            padding: 4rem 2rem 6rem;
+            background: linear-gradient(180deg, var(--night-deep) 0%, var(--night-mid) 100%);
+        }
+        
+        .chapters-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .chapters-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .chapter-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .chapter-card:hover::before {
+            opacity: 1;
+        }
+        
+        .chapter-card-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 0.75rem;
+        }
+        
+        .chapter-card-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .chapter-card-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .chapter-card-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .chapter-card-type.interactive { color: var(--accent-blue); }
+        .chapter-card-type.story { color: var(--accent-warm); }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        footer p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="index-page">
+        <section class="hero">
+            <div class="star-field" id="starField"></div>
+            <div class="hero-planets">
+                <div class="hero-planet jupiter"></div>
+                <div class="hero-planet venus"></div>
+            </div>
+            
+            <div class="hero-content">
+                <p class="hero-tagline">Et interaktivt læringsmiddel</p>
+                <h1 class="hero-title">Da himlen <em>åbnede sig</em></h1>
+                <p class="hero-intro">
+                    I 1610 rettede en italiensk matematiker sit teleskop mod nattehimlen. 
+                    Hans observationer af Jupiter og Venus leverede de afgørende beviser 
+                    mod et verdensbillede, der havde hersket i 2000 år.
+                </p>
+            </div>
+        </section>
+        
+        <section class="chapters-section">
+            <div class="chapters-header">
+                <h2>Vælg et kapitel</h2>
+            </div>
+            
+            <div class="chapters-grid">
+                <a href="kapitel-1.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel I</div>
+                    <h3 class="chapter-card-title">Galileos Blik</h3>
+                    <p class="chapter-card-desc">
+                        Padova, januar 1610. En professor retter sit teleskop mod Jupiter 
+                        og opdager noget, der vil ændre verdensbilledet for evigt.
+                    </p>
+                    <div class="chapter-card-type story">Fortælling</div>
+                </a>
+                
+                <a href="kapitel-2.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel II</div>
+                    <h3 class="chapter-card-title">Jupiters måner</h3>
+                    <p class="chapter-card-desc">
+                        Observer månerne som Galileo gjorde det. En interaktiv simulator 
+                        viser hvordan Io, Europa, Ganymede og Callisto danser om Jupiter.
+                    </p>
+                    <div class="chapter-card-type interactive">Interaktiv simulator</div>
+                </a>
+                
+                <a href="kapitel-3.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel III</div>
+                    <h3 class="chapter-card-title">Venus' faser</h3>
+                    <p class="chapter-card-desc">
+                        Det afgørende bevis. Se hvorfor Venus' faser var umulige i 
+                        Ptolemæus' model – og hvad de beviste om solsystemet.
+                    </p>
+                    <div class="chapter-card-type interactive">Interaktiv simulator</div>
+                </a>
+                
+                <a href="kapitel-4.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel IV</div>
+                    <h3 class="chapter-card-title">Den videnskabelige revolution</h3>
+                    <p class="chapter-card-desc">
+                        133 år der ændrede alt. Fra Copernicus' forsigtige forslag 
+                        til Newtons endelige bekræftelse.
+                    </p>
+                    <div class="chapter-card-type story">Kronologi</div>
+                </a>
+                
+                <a href="kapitel-5.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel V</div>
+                    <h3 class="chapter-card-title">Lysets hastighed</h3>
+                    <p class="chapter-card-desc">
+                        Paris, 1676. Ole Rømer bruger Galileos måner til at bevise, 
+                        at lyset har en endelig hastighed.
+                    </p>
+                    <div class="chapter-card-type interactive">Interaktiv diagram</div>
+                </a>
+                
+                <a href="kapitel-6.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel VI</div>
+                    <h3 class="chapter-card-title">Keplers ellipser</h3>
+                    <p class="chapter-card-desc">
+                        Modellen der endelig passede. Hvorfor cirkler ikke duede, 
+                        og hvad Kepler opdagede i Tychos data.
+                    </p>
+                    <div class="chapter-card-type story">Fortælling</div>
+                </a>
+                
+                <a href="kapitel-7.html" class="chapter-card">
+                    <div class="chapter-card-number">Kapitel VII</div>
+                    <h3 class="chapter-card-title">Elevopgaver</h3>
+                    <p class="chapter-card-desc">
+                        Test din forståelse med opgaver om Jupiter, Venus, 
+                        Rømer og den videnskabelige revolution.
+                    </p>
+                    <div class="chapter-card-type">Opgaver</div>
+                </a>
+            </div>
+        </section>
+        
+        <footer>
+            <p>
+                Udarbejdet som undervisningsmateriale til naturgeografi og fysik<br>
+                <a href="https://geo.sg.dk">geo.sg.dk</a>
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // Create stars
+        const starField = document.getElementById('starField');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            const size = Math.random() * 2 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.animationDelay = Math.random() * 4 + 's';
+            star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            starField.appendChild(star);
+        }
+    </script>
+    <script src="scripts.js"></script>
+</body>
+</html>

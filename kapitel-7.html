@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapitel VII: Elevopgaver – Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .exercise-group {
+            margin: 2.5rem 0;
+        }
+        
+        .exercise-group-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .exercise-group-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-blue-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .exercise-group-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+        
+        .exercise-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            counter-increment: exercise;
+        }
+        
+        .exercise-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+        
+        .exercise-number::before {
+            content: "Opgave " counter(exercise);
+        }
+        
+        .exercise-question {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            margin-bottom: 0.75rem;
+        }
+        
+        .exercise-hint {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-style: italic;
+            padding-left: 1rem;
+            border-left: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .exercise-subquestions {
+            margin-top: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        .exercise-subquestions li {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .difficulty-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .difficulty-easy {
+            background: rgba(96, 160, 104, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .difficulty-medium {
+            background: rgba(212, 168, 75, 0.2);
+            color: var(--accent-gold);
+        }
+        
+        .difficulty-hard {
+            background: rgba(200, 96, 96, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .simulator-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            margin-top: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--accent-blue-soft);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .simulator-link:hover {
+            background: rgba(90, 140, 200, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main class="main-content">
+            <header class="chapter-header fade-in">
+                <div class="chapter-label">Kapitel VII</div>
+                <h1 class="chapter-title">Elevopgaver</h1>
+                <p class="chapter-subtitle">Test din forståelse</p>
+            </header>
+            
+            <!-- JUPITER EXERCISES -->
+            <div class="exercise-group fade-in fade-in-delay-1">
+                <div class="exercise-group-header">
+                    <div class="exercise-group-icon">♃</div>
+                    <h2 class="exercise-group-title">Jupiters måner</h2>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-easy">Let</span></div>
+                    <p class="exercise-question">
+                        Brug Jupiter-simulatoren til at finde ud af, hvor mange omløb Io gennemfører, 
+                        mens Callisto gennemfører ét.
+                    </p>
+                    <a href="kapitel-2.html" class="simulator-link">Gå til Jupiter-simulator →</a>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-medium">Mellem</span></div>
+                    <p class="exercise-question">
+                        Galileo observerede månerne for første gang den 7. januar 1610. 
+                        Brug simulatoren til at se konfigurationen den dag – og sammenlign med 
+                        konfigurationen præcis én uge senere.
+                    </p>
+                    <ol class="exercise-subquestions">
+                        <li>Hvilke måner var synlige på hver side af Jupiter?</li>
+                        <li>Hvilken måne havde flyttet sig mest?</li>
+                        <li>Hvorfor var dette bevis for, at månerne kredser om Jupiter?</li>
+                    </ol>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-hard">Svær</span></div>
+                    <p class="exercise-question">
+                        Jupiter-månerne modbeviste ikke direkte det geocentriske verdensbillede. 
+                        Forklar hvorfor – og forklar, hvad de <strong>faktisk</strong> beviste.
+                    </p>
+                    <p class="exercise-hint">
+                        Hint: Tænk på, hvad kritikerne sagde om en Jord i bevægelse.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- VENUS EXERCISES -->
+            <div class="exercise-group fade-in">
+                <div class="exercise-group-header">
+                    <div class="exercise-group-icon">♀</div>
+                    <h2 class="exercise-group-title">Venus' faser</h2>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-easy">Let</span></div>
+                    <p class="exercise-question">
+                        Brug Venus-simulatoren til at finde ud af: 
+                        Hvornår er Venus størst set fra Jorden – når den er "fuld" eller "ny"?
+                    </p>
+                    <a href="kapitel-3.html" class="simulator-link">Gå til Venus-simulator →</a>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-medium">Mellem</span></div>
+                    <p class="exercise-question">
+                        Forklar med egne ord, hvorfor Venus' faser var et afgørende bevis mod 
+                        Ptolemæus' model. Brug simulatoren til at understøtte din forklaring.
+                    </p>
+                    <ol class="exercise-subquestions">
+                        <li>Hvilke faser kan Venus vise i Ptolemæus' model?</li>
+                        <li>Hvilke faser observerede Galileo?</li>
+                        <li>Hvorfor er dette en selvmodsigelse?</li>
+                    </ol>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-hard">Svær</span></div>
+                    <p class="exercise-question">
+                        Hvorfor brugte Galileo ikke Venus' faser som argument i sin berømte 
+                        "Dialog" fra 1632, selvom han havde observeret dem allerede i 1610?
+                    </p>
+                    <p class="exercise-hint">
+                        Hint: Tænk på Tycho Brahes kompromismodel.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- RØMER EXERCISES -->
+            <div class="exercise-group fade-in">
+                <div class="exercise-group-header">
+                    <div class="exercise-group-icon">💡</div>
+                    <h2 class="exercise-group-title">Lysets hastighed</h2>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-easy">Let</span></div>
+                    <p class="exercise-question">
+                        Brug Rømer-diagrammet til at finde den største og mindste afstand 
+                        mellem Jorden og Jupiter.
+                    </p>
+                    <a href="kapitel-5.html" class="simulator-link">Gå til Rømer-diagram →</a>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-medium">Mellem</span></div>
+                    <p class="exercise-question">
+                        Rømer observerede, at Ios formørkelser var ca. 22 minutter forsinket, 
+                        når Jorden var længst væk fra Jupiter, sammenlignet med når den var tættest på.
+                    </p>
+                    <ol class="exercise-subquestions">
+                        <li>Hvor langt rejser Jorden i sin bane på et halvt år? (Diameter af Jordens bane)</li>
+                        <li>Beregn lysets hastighed ud fra Rømers observation.</li>
+                        <li>Sammenlign med den faktiske værdi (299.792 km/s). Hvor tæt var Rømer?</li>
+                    </ol>
+                    <p class="exercise-hint">
+                        Hint: 1 AU = 149,6 millioner km. Jordens bane har diameter på ca. 2 AU.
+                    </p>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-hard">Svær</span></div>
+                    <p class="exercise-question">
+                        Mange videnskabsmænd – inklusive Cassini, der ledede Paris' observatorium – 
+                        afviste Rømers konklusion. Hvad kunne deres modargumenter have været?
+                    </p>
+                </div>
+            </div>
+            
+            <!-- KEPLER EXERCISES -->
+            <div class="exercise-group fade-in">
+                <div class="exercise-group-header">
+                    <div class="exercise-group-icon">⬭</div>
+                    <h2 class="exercise-group-title">Keplers love</h2>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-medium">Mellem</span></div>
+                    <p class="exercise-question">
+                        Kepler skrev, at "otte bueminutter" ændrede alt. 
+                        Hvad er 8 bueminutter som en del af en fuld cirkel (360°)?
+                    </p>
+                    <p class="exercise-hint">
+                        Hint: 1° = 60 bueminutter.
+                    </p>
+                </div>
+                
+                <div class="exercise-card">
+                    <div class="exercise-number"><span class="difficulty-badge difficulty-hard">Svær</span></div>
+                    <p class="exercise-question">
+                        Keplers 3. lov siger, at T² = k · a³, hvor T er omløbstiden i år og 
+                        a er afstanden til Solen i AU.
+                    </p>
+                    <ol class="exercise-subquestions">
+                        <li>Jorden har T = 1 år og a = 1 AU. Hvad er konstanten k?</li>
+                        <li>Mars har a = 1,52 AU. Beregn Mars' omløbstid.</li>
+                        <li>Jupiter har T = 11,86 år. Beregn Jupiters afstand til Solen.</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- REFLECTION -->
+            <section class="exercises-section fade-in">
+                <div class="exercises-header">
+                    <div class="exercises-icon">?</div>
+                    <span class="exercises-title">Refleksionsopgave</span>
+                </div>
+                <ol>
+                    <li>
+                        <strong>Den videnskabelige revolution handlede ikke kun om hvad vi vidste, 
+                        men om hvordan vi fandt ud af det.</strong>
+                        <br><br>
+                        Diskuter denne påstand med udgangspunkt i Galileos, Keplers og Rømers arbejde. 
+                        Hvad var nyt ved deres metode – ikke bare deres konklusioner?
+                    </li>
+                </ol>
+            </section>
+            
+            <!-- PAGE NAVIGATION -->
+            <nav class="page-nav">
+                <a href="kapitel-6.html" class="page-nav-btn prev">
+                    <span class="arrow">←</span>
+                    <div>
+                        <div class="label">Forrige</div>
+                        <div class="title">Keplers ellipser</div>
+                    </div>
+                </a>
+                
+                <div class="chapter-indicator">
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot completed"></span>
+                    <span class="chapter-dot active"></span>
+                </div>
+                
+                <a href="index.html" class="page-nav-btn next">
+                    <div>
+                        <div class="label">Tilbage til</div>
+                        <div class="title">Kapiteloversigt</div>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </nav>
+        </main>
+        
+        <!-- PORTRAIT SIDEBAR -->
+        <aside class="portrait-sidebar">
+            <div class="portrait-card">
+                <img src="images/galileo.jpg" alt="Galileo Galilei" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Galileo</h3>
+                    <div class="portrait-dates">Jupiter & Venus</div>
+                </div>
+            </div>
+            
+            <div class="portrait-card">
+                <img src="images/roemer.jpg" alt="Ole Rømer" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Rømer</h3>
+                    <div class="portrait-dates">Lysets hastighed</div>
+                </div>
+            </div>
+            
+            <div class="portrait-card">
+                <img src="images/kepler.jpg" alt="Johannes Kepler" class="portrait-image">
+                <div class="portrait-info">
+                    <h3 class="portrait-name">Kepler</h3>
+                    <div class="portrait-dates">Ellipserne</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>
