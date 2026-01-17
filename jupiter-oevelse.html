@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jupiter-øvelse - Da himlen åbnede sig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .exercise-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--page-padding);
+        }
+
+        /* Trin-navigation */
+        .steps-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .step-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .step-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .step-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: var(--night-deep);
+        }
+
+        .step-btn.completed {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        /* Info-boks om manglende data */
+        .data-info {
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.15) 0%, transparent 100%);
+            border: 1px solid rgba(212, 168, 75, 0.3);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-info h4 {
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-info p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .data-info .date-range {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-gold);
+        }
+
+        /* Billede-viewer */
+        .image-viewer {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .image-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .image-nav-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            background: var(--surface-elevated);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .image-nav-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .image-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .image-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .image-timestamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+        }
+
+        .image-date {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+        }
+
+        .image-index {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        .time-gap-warning {
+            background: rgba(200, 96, 96, 0.2);
+            color: var(--accent-red);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .canvas-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        #imageCanvas {
+            cursor: crosshair;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Zoom controls */
+        .zoom-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .zoom-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            width: 32px;
+            height: 32px;
+            background: var(--surface-elevated);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .zoom-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .zoom-level {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .help-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.5rem 1rem;
+            background: rgba(96, 160, 104, 0.15);
+            border: 1px solid rgba(96, 160, 104, 0.3);
+            color: var(--accent-green);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .help-btn:hover, .help-btn.active {
+            background: rgba(96, 160, 104, 0.3);
+            border-color: var(--accent-green);
+        }
+
+        #jupiterRingBtn:hover, #jupiterRingBtn.active {
+            background: rgba(200, 96, 96, 0.3) !important;
+            border-color: var(--accent-red) !important;
+        }
+
+        /* Adjustment controls for fine-tuning Io marker */
+        .adjustment-controls {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(96, 160, 104, 0.1);
+            border: 1px solid rgba(96, 160, 104, 0.2);
+            border-radius: 8px;
+        }
+
+        .adjustment-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .adjustment-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .adjustment-row label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 130px;
+        }
+
+        .adjustment-row input[type="range"] {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .adjustment-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .adjustment-controls .reset-btn {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adjustment-controls .reset-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: var(--text-primary);
+        }
+
+        /* Måne-selector */
+        .moon-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .moon-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface-elevated);
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .moon-btn[data-moon="io"] { color: var(--io-orange); }
+        .moon-btn[data-moon="europa"] { color: var(--europa-ice); }
+        .moon-btn[data-moon="ganymede"] { color: var(--ganymede-grey); }
+        .moon-btn[data-moon="callisto"] { color: var(--callisto-brown); }
+
+        .moon-btn.active {
+            border-color: currentColor;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .moon-btn .count {
+            margin-left: 0.5rem;
+            opacity: 0.6;
+        }
+
+        /* Skalerings-info */
+        .scale-info {
+            background: var(--surface-elevated);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .scale-info strong {
+            color: var(--accent-gold);
+        }
+
+        /* Måle-tabel */
+        .measurements-panel {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .measurements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .measurements-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .clear-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(200, 96, 96, 0.15);
+            border: 1px solid rgba(200, 96, 96, 0.3);
+            color: var(--accent-red);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .measurements-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .measurements-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .measurements-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .measurements-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .delete-measurement {
+            background: none;
+            border: none;
+            color: var(--accent-red);
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .delete-measurement:hover {
+            opacity: 1;
+        }
+
+        /* Model-fitting sektion */
+        .fitting-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 1000px) {
+            .fitting-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .moon-fitter {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1rem;
+        }
+
+        .moon-fitter.inactive {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .moon-fitter-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .moon-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .moon-dot.io { background: var(--io-orange); }
+        .moon-dot.europa { background: var(--europa-ice); }
+        .moon-dot.ganymede { background: var(--ganymede-grey); }
+        .moon-dot.callisto { background: var(--callisto-brown); }
+
+        .moon-fitter-name {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.2rem;
+        }
+
+        .moon-fitter-status {
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .slider-group {
+            margin-bottom: 1rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .slider-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+        }
+
+        .fit-score {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .fit-score-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .fit-score-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--surface-elevated);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .fit-score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-gold), var(--accent-green));
+            transition: width 0.3s ease;
+        }
+
+        .fit-score-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* Graf-container */
+        .chart-container {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .chart-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .chart-moon-selector {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .chart-moon-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--surface-elevated);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-moon-btn[data-moon="io"] { color: var(--io-orange); }
+        .chart-moon-btn[data-moon="europa"] { color: var(--europa-ice); }
+        .chart-moon-btn[data-moon="ganymede"] { color: var(--ganymede-grey); }
+        .chart-moon-btn[data-moon="callisto"] { color: var(--callisto-brown); }
+
+        .chart-moon-btn.active {
+            border-color: currentColor;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+        }
+
+        /* Kepler sektion */
+        .kepler-results {
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.1) 0%, transparent 100%);
+            border: 1px solid rgba(212, 168, 75, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .kepler-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .kepler-equation {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .results-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .results-table .known {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .results-table .measured {
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+
+        /* Instruktioner */
+        .instructions {
+            background: var(--facts-bg);
+            border: 1px solid var(--facts-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .instructions h3 {
+            font-size: 1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Home link */
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+
+        .home-link:hover {
+            color: var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="exercise-container">
+        <a href="index.html" class="home-link">← Tilbage til oversigten</a>
+
+        <header class="chapter-header">
+            <div class="chapter-label">Interaktiv øvelse</div>
+            <h1 class="chapter-title">Jupiters måner</h1>
+            <p class="chapter-subtitle">Bestem omløbstider fra egne observationer - som Galileo og Rømer</p>
+        </header>
+
+        <nav class="steps-nav">
+            <button class="step-btn active" data-step="1">1. Mål positioner</button>
+            <button class="step-btn" data-step="2">2. Fit modellen</button>
+            <button class="step-btn" data-step="3">3. Verificér Keplers lov</button>
+        </nav>
+
+        <!-- TRIN 1: Måling -->
+        <section class="step-content active" id="step1">
+            <div class="data-info">
+                <h4>Om observationerne</h4>
+                <p>
+                    Billederne er taget med et Seestar S50 teleskop i perioden
+                    <span class="date-range">29. december 2025 - 5. januar 2026</span>.
+                    <strong>Bemærk:</strong> Der mangler observationer fra 31. december - 2. januar på grund af skydække.
+                    Månernes positioner omregnes automatisk til kilometer ved hjælp af Jupiters kendte diameter (139.820 km) som skala.
+                </p>
+            </div>
+
+            <div class="instructions">
+                <h3>Sådan gør du</h3>
+                <ol>
+                    <li>Vælg en måne nedenfor (start med <strong>Io</strong> - den inderste og hurtigste)</li>
+                    <li>Klik på månens position i billedet. Jupiter er i centrum (x = 0 km).</li>
+                    <li>Brug piletaster eller knapper til at gå til næste billede og gentag</li>
+                    <li>Mål mindst 8-10 positioner for hver måne for et godt fit</li>
+                    <li>Brug <strong>Vis måner</strong>-knappen for at se de beregnede positioner for alle fire måner</li>
+                </ol>
+            </div>
+
+            <div class="image-viewer">
+                <div class="image-controls">
+                    <button class="image-nav-btn" id="prevBtn">←</button>
+                    <div class="image-info">
+                        <div class="image-date" id="imageDate">Indlæser...</div>
+                        <div class="image-timestamp" id="timestamp">--:--</div>
+                        <div class="image-index" id="imageIndex">Billede 1 af 27</div>
+                        <div class="time-gap-warning" id="timeGap" style="display: none;"></div>
+                    </div>
+                    <button class="image-nav-btn" id="nextBtn">→</button>
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" id="zoomOut">−</button>
+                        <span class="zoom-level" id="zoomLevel">100%</span>
+                        <button class="zoom-btn" id="zoomIn">+</button>
+                    </div>
+                    <button class="help-btn" id="helpBtn">Vis måner</button>
+                    <button class="help-btn" id="jupiterRingBtn" style="background: rgba(200, 96, 96, 0.15); border-color: rgba(200, 96, 96, 0.3); color: var(--accent-red);">Jupiter-ring</button>
+                </div>
+                <div class="adjustment-controls" id="adjustmentControls" style="display: none;">
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--accent-green); margin-bottom: 0.5rem;">Finjuster (dette billede):</div>
+                    <div class="adjustment-row">
+                        <label>Jupiter X: <span id="xOffsetValue">0</span> px</label>
+                        <input type="range" id="xOffset" min="-30" max="30" value="0">
+                    </div>
+                    <div class="adjustment-row">
+                        <label>Jupiter Y: <span id="yOffsetValue">0</span> px</label>
+                        <input type="range" id="yOffset" min="-30" max="30" value="0">
+                    </div>
+                    <div class="adjustment-row">
+                        <label>Vinkel: <span id="angleOffsetValue">0</span>°</label>
+                        <input type="range" id="angleOffset" min="-15" max="15" value="0" step="0.5">
+                    </div>
+                    <div class="adjustment-row">
+                        <label>Skala: <span id="scaleOffsetValue">0</span> km/px</label>
+                        <input type="range" id="scaleOffset" min="-300" max="300" value="0" step="10">
+                    </div>
+                    <button class="reset-btn" id="resetAdjustments" style="margin-top: 0.5rem; font-size: 0.65rem; padding: 0.3rem 0.6rem;">Nulstil</button>
+                </div>
+                <div class="canvas-container">
+                    <div class="canvas-wrapper" id="canvasWrapper">
+                        <canvas id="imageCanvas"></canvas>
+                    </div>
+                </div>
+                <div class="moon-selector">
+                    <button class="moon-btn active" data-moon="io">Io <span class="count">(0)</span></button>
+                    <button class="moon-btn" data-moon="europa">Europa <span class="count">(0)</span></button>
+                    <button class="moon-btn" data-moon="ganymede">Ganymedes <span class="count">(0)</span></button>
+                    <button class="moon-btn" data-moon="callisto">Callisto <span class="count">(0)</span></button>
+                </div>
+                <div class="scale-info">
+                    <strong>Skala:</strong> Jupiters diameter på billedet bruges til at omregne pixel-positioner til kilometer.
+                    Jupiter = 139.820 km i diameter. Din målte afstand vises i både pixels og km.
+                </div>
+            </div>
+
+            <div class="measurements-panel">
+                <div class="measurements-header">
+                    <span class="measurements-title">Dine målinger</span>
+                    <button class="clear-btn" id="clearMeasurements">Ryd alle</button>
+                </div>
+                <table class="measurements-table">
+                    <thead>
+                        <tr>
+                            <th>Måne</th>
+                            <th>Dato & tid</th>
+                            <th>Position (km)</th>
+                            <th>Dage fra start</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="measurementsBody">
+                        <tr><td colspan="5" style="text-align: center; color: var(--text-dim);">Ingen målinger endnu</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn" id="toStep2" style="margin-top: 1rem;">Fortsæt til model-fitting →</button>
+        </section>
+
+        <!-- TRIN 2: Model-fitting -->
+        <section class="step-content" id="step2">
+            <div class="instructions">
+                <h3>Tilpas modellen</h3>
+                <ol>
+                    <li>Vælg en måne i grafen til højre for at se dens data</li>
+                    <li>Justér <strong>amplitude</strong> (maks. afstand fra Jupiter i km) og <strong>periode</strong> (omløbstid i dage)</li>
+                    <li>Se hvordan den beregnede kurve (linjen) passer med dine målinger (prikkerne)</li>
+                    <li>Målet er at få kurven til at gå gennem så mange punkter som muligt</li>
+                </ol>
+            </div>
+
+            <div class="fitting-layout">
+                <div class="fitters-column">
+                    <div class="moon-fitter" data-moon="io">
+                        <div class="moon-fitter-header">
+                            <span class="moon-dot io"></span>
+                            <span class="moon-fitter-name">Io</span>
+                            <span class="moon-fitter-status" id="io-status">0 målinger</span>
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Amplitude (×1000 km)</span>
+                                <span class="slider-value" id="io-amp-value">422</span>
+                            </div>
+                            <input type="range" id="io-amplitude" min="200" max="600" value="422">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Periode (dage)</span>
+                                <span class="slider-value" id="io-per-value">1.77</span>
+                            </div>
+                            <input type="range" id="io-period" min="0.5" max="4" step="0.01" value="1.77">
+                        </div>
+                        <div class="fit-score">
+                            <span class="fit-score-label">Fit:</span>
+                            <div class="fit-score-bar"><div class="fit-score-fill" id="io-fit" style="width: 0%"></div></div>
+                            <span class="fit-score-value" id="io-score">-</span>
+                        </div>
+                    </div>
+
+                    <div class="moon-fitter" data-moon="europa">
+                        <div class="moon-fitter-header">
+                            <span class="moon-dot europa"></span>
+                            <span class="moon-fitter-name">Europa</span>
+                            <span class="moon-fitter-status" id="europa-status">0 målinger</span>
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Amplitude (×1000 km)</span>
+                                <span class="slider-value" id="europa-amp-value">671</span>
+                            </div>
+                            <input type="range" id="europa-amplitude" min="400" max="900" value="671">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Periode (dage)</span>
+                                <span class="slider-value" id="europa-per-value">3.55</span>
+                            </div>
+                            <input type="range" id="europa-period" min="1" max="6" step="0.01" value="3.55">
+                        </div>
+                        <div class="fit-score">
+                            <span class="fit-score-label">Fit:</span>
+                            <div class="fit-score-bar"><div class="fit-score-fill" id="europa-fit" style="width: 0%"></div></div>
+                            <span class="fit-score-value" id="europa-score">-</span>
+                        </div>
+                    </div>
+
+                    <div class="moon-fitter" data-moon="ganymede">
+                        <div class="moon-fitter-header">
+                            <span class="moon-dot ganymede"></span>
+                            <span class="moon-fitter-name">Ganymedes</span>
+                            <span class="moon-fitter-status" id="ganymede-status">0 målinger</span>
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Amplitude (×1000 km)</span>
+                                <span class="slider-value" id="ganymede-amp-value">1070</span>
+                            </div>
+                            <input type="range" id="ganymede-amplitude" min="700" max="1400" value="1070">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Periode (dage)</span>
+                                <span class="slider-value" id="ganymede-per-value">7.15</span>
+                            </div>
+                            <input type="range" id="ganymede-period" min="4" max="12" step="0.01" value="7.15">
+                        </div>
+                        <div class="fit-score">
+                            <span class="fit-score-label">Fit:</span>
+                            <div class="fit-score-bar"><div class="fit-score-fill" id="ganymede-fit" style="width: 0%"></div></div>
+                            <span class="fit-score-value" id="ganymede-score">-</span>
+                        </div>
+                    </div>
+
+                    <div class="moon-fitter" data-moon="callisto">
+                        <div class="moon-fitter-header">
+                            <span class="moon-dot callisto"></span>
+                            <span class="moon-fitter-name">Callisto</span>
+                            <span class="moon-fitter-status" id="callisto-status">0 målinger</span>
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Amplitude (×1000 km)</span>
+                                <span class="slider-value" id="callisto-amp-value">1883</span>
+                            </div>
+                            <input type="range" id="callisto-amplitude" min="1200" max="2500" value="1883">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Periode (dage)</span>
+                                <span class="slider-value" id="callisto-per-value">16.69</span>
+                            </div>
+                            <input type="range" id="callisto-period" min="10" max="25" step="0.01" value="16.69">
+                        </div>
+                        <div class="fit-score">
+                            <span class="fit-score-label">Fit:</span>
+                            <div class="fit-score-bar"><div class="fit-score-fill" id="callisto-fit" style="width: 0%"></div></div>
+                            <span class="fit-score-value" id="callisto-score">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">Position vs. tid</div>
+                        <div class="chart-moon-selector">
+                            <button class="chart-moon-btn active" data-moon="io">Io</button>
+                            <button class="chart-moon-btn" data-moon="europa">Europa</button>
+                            <button class="chart-moon-btn" data-moon="ganymede">Ganymedes</button>
+                            <button class="chart-moon-btn" data-moon="callisto">Callisto</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="positionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" id="toStep3" style="margin-top: 1.5rem;">Fortsæt til Keplers lov →</button>
+        </section>
+
+        <!-- TRIN 3: Kepler -->
+        <section class="step-content" id="step3">
+            <div class="kepler-results">
+                <h2 class="kepler-title">Keplers 3. lov</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Kepler opdagede at der er en matematisk sammenhæng mellem en planets omløbstid (T)
+                    og dens afstand fra det centrale legeme (a):
+                </p>
+                <div class="kepler-equation">
+                    T² ∝ a³  &nbsp;&nbsp;eller&nbsp;&nbsp;  T² / a³ = konstant
+                </div>
+                <p style="color: var(--text-secondary);">
+                    Hvis dine målinger er præcise, skal forholdet T²/a³ give (cirka) samme værdi for alle fire måner.
+                </p>
+
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Måne</th>
+                            <th>Din periode (dage)</th>
+                            <th>Kendt periode</th>
+                            <th>Din amplitude (km)</th>
+                            <th>Kendt afstand</th>
+                            <th>T² / a³</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keplerBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-container" style="margin-top: 1.5rem;">
+                <div class="chart-title">T² vs a³ (bør være lineært hvis Keplers lov gælder)</div>
+                <div class="chart-wrapper">
+                    <canvas id="keplerChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ============================================
+        // DATA
+        // ============================================
+        // Calibrated using moon position matching from ephemeris
+        // Each image has its own scale (km/pixel) optimized by matching detected moons to predictions
+        // Images re-cropped from originals with Jupiter vertically centered at Y=525
+        // Universal scale: 3600 km/pixel (Seestar S50 fixed zoom)
+        const SCALE = 3600;
+        const images = [
+            { file: "2025-12-29-184902-Jupiter.JPG", timestamp: "2025-12-29 18:49:02", jupiterX: 449, jupiterY: 525, scale: SCALE, angle: -37.0, ioX: -334844, ioY: 67419, europaX: 555879, europaY: -110914, ganymedeX: -917432, ganymedeY: 183201, callistoX: 1696636, callistoY: -322293 },
+            { file: "2025-12-29-210902-Jupiter.JPG", timestamp: "2025-12-29 21:09:02", jupiterX: 519, jupiterY: 525, scale: SCALE, angle: -40.3, ioX: -237271, ioY: 51929, europaX: 492279, europaY: -100481, ganymedeX: -873708, ganymedeY: 177085, callistoX: 1672928, callistoY: -319133 },
+            { file: "2025-12-29-225547-Jupiter.JPG", timestamp: "2025-12-29 22:55:47", jupiterX: 385, jupiterY: 525, scale: SCALE, angle: -19.7, ioX: -143011, ioY: 35825, europaX: 433579, europaY: -90455, ganymedeX: -836048, ganymedeY: 171554, callistoX: 1653297, callistoY: -316430 },
+            { file: "2025-12-29-230925-Jupiter.JPG", timestamp: "2025-12-29 23:09:25", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: -17.0, ioX: -130105, ioY: 33564, europaX: 425505, europaY: -89055, ganymedeX: -830978, ganymedeY: 170795, callistoX: 1650694, callistoY: -316066 },
+            { file: "2025-12-30-010439-Jupiter.JPG", timestamp: "2025-12-30 01:04:39", jupiterX: 504, jupiterY: 525, scale: SCALE, angle: 10.9, ioX: -16642, ioY: 13222, europaX: 351586, europaY: -76147, ganymedeX: -785853, ganymedeY: 163913, callistoX: 1627832, callistoY: -312832 },
+            { file: "2025-12-30-020234-Jupiter.JPG", timestamp: "2025-12-30 02:02:34", jupiterX: 517, jupiterY: 525, scale: SCALE, angle: 22.9, ioX: 41433, ioY: 2481, europaX: 312081, europaY: -69096, ganymedeX: -761683, ganymedeY: 160147, callistoX: 1615765, callistoY: -311097 },
+            { file: "2025-12-30-024951-Jupiter.JPG", timestamp: "2025-12-30 02:49:51", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: 29.7, ioX: 88271, ioY: -6331, europaX: 278625, europaY: -63076, ganymedeX: -741240, ganymedeY: 156924, callistoX: 1605631, callistoY: -309626 },
+            { file: "2025-12-30-040640-Jupiter.JPG", timestamp: "2025-12-30 04:06:40", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: 35.9, ioX: 161526, ioY: -20407, europaX: 222283, europaY: -52847, ganymedeX: -706712, ganymedeY: 151413, callistoX: 1588629, callistoY: -307135 },
+            { file: "2025-12-30-045254-Jupiter.JPG", timestamp: "2025-12-30 04:52:54", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: 37.2, ioX: 202989, ioY: -28555, europaX: 187369, europaY: -46456, ganymedeX: -685173, ganymedeY: 147935, callistoX: 1578077, callistoY: -305575 },
+            { file: "2025-12-30-055955-Jupiter.JPG", timestamp: "2025-12-30 05:59:55", jupiterX: 515, jupiterY: 525, scale: SCALE, angle: 36.9, ioX: 258283, ioY: -39677, europaX: 135702, europaY: -36932, ganymedeX: -652981, ganymedeY: 142688, callistoX: 1562361, callistoY: -303233 },
+            { file: "2025-12-30-182528-Jupiter.JPG", timestamp: "2025-12-30 18:25:28", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: -26.6, ioX: 238992, ioY: -52150, europaX: -420213, europaY: 70376, ganymedeX: -234248, ganymedeY: 70604, callistoX: 1355488, callistoY: -271016 },
+            { file: "2025-12-30-195300-Jupiter.JPG", timestamp: "2025-12-30 19:53:00", jupiterX: 514, jupiterY: 525, scale: SCALE, angle: -38.1, ioX: 162977, ioY: -39264, europaX: -470857, europaY: 80749, ganymedeX: -180098, ganymedeY: 60891, callistoX: 1327561, callistoY: -266527 },
+            { file: "2025-12-30-205156-Jupiter.JPG", timestamp: "2025-12-30 20:51:56", jupiterX: 574, jupiterY: 525, scale: SCALE, angle: -34.7, ioX: 107327, ioY: -29533, europaX: -501959, europaY: 87216, ganymedeX: -143337, ganymedeY: 54254, callistoX: 1308355, callistoY: -263425 },
+            { file: "2026-01-03-013326-Jupiter.JPG", timestamp: "2026-01-03 01:33:26", jupiterX: 617, jupiterY: 525, scale: SCALE, angle: 3.4, ioX: 406134, ioY: -74212, europaX: -169550, europaY: 20128, ganymedeX: 461049, ganymedeY: -108867, callistoX: -712889, callistoY: 91712 },
+            { file: "2026-01-03-021145-Jupiter.JPG", timestamp: "2026-01-03 02:11:45", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: 16.7, ioX: 400455, ioY: -74128, europaX: -198828, europaY: 25694, ganymedeX: 439326, ganymedeY: -105200, callistoX: -729689, callistoY: 94832 },
+            { file: "2026-01-03-041834-Jupiter.JPG", timestamp: "2026-01-03 04:18:34", jupiterX: 585, jupiterY: 525, scale: SCALE, angle: 35.5, ioX: 356942, ioY: -69232, europaX: -292240, europaY: 43633, ganymedeX: 365780, ganymedeY: -92675, callistoX: -784759, callistoY: 105082 },
+            { file: "2026-01-03-052237-Jupiter.JPG", timestamp: "2026-01-03 05:22:37", jupiterX: 491, jupiterY: 525, scale: SCALE, angle: 37.3, ioX: 321535, ioY: -64180, europaX: -336871, europaY: 52314, ganymedeX: 327774, ganymedeY: -86138, callistoX: -812250, callistoY: 110212 },
+            { file: "2026-01-03-190408-Jupiter.JPG", timestamp: "2026-01-03 19:04:08", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: -31.4, ioX: -364810, ioY: 60966, europaX: -651994, europaY: 119926, ganymedeX: -183093, ganymedeY: 5340, callistoX: -1142102, callistoY: 172568 },
+            { file: "2026-01-03-205449-Jupiter.JPG", timestamp: "2026-01-03 20:54:49", jupiterX: 525, jupiterY: 525, scale: SCALE, angle: -35.2, ioX: -399015, ioY: 69721, europaX: -648620, europaY: 120825, ganymedeX: -251261, ganymedeY: 18034, callistoX: -1182853, callistoY: 180395 },
+            { file: "2026-01-04-001905-Jupiter.JPG", timestamp: "2026-01-04 00:19:05", jupiterX: 611, jupiterY: 525, scale: SCALE, angle: -12.2, ioX: -383282, ioY: 71943, europaX: -611898, europaY: 116785, ganymedeX: -373836, ganymedeY: 41173, callistoX: -1255446, callistoY: 194424 },
+            { file: "2026-01-04-032117-Jupiter.JPG", timestamp: "2026-01-04 03:21:17", jupiterX: 541, jupiterY: 525, scale: SCALE, angle: 31.7, ioX: -287173, ioY: 58578, europaX: -547439, europaY: 107149, ganymedeX: -478339, ganymedeY: 61254, callistoX: -1317198, callistoY: 206455 },
+            { file: "2026-01-04-052600-Jupiter.JPG", timestamp: "2026-01-04 05:26:00", jupiterX: 560, jupiterY: 525, scale: SCALE, angle: 34.1, ioX: -186423, ioY: 42395, europaX: -487670, europaY: 97511, ganymedeX: -546547, ganymedeY: 74562, callistoX: -1357762, callistoY: 214414 },
+            { file: "2026-01-04-193214-Jupiter.JPG", timestamp: "2026-01-04 19:32:14", jupiterX: 643, jupiterY: 525, scale: SCALE, angle: -33.6, ioX: 408125, ioY: -73150, europaX: 119981, europaY: -10510, ganymedeX: -908076, ganymedeY: 149597, callistoX: -1593116, callistoY: 261861 },
+            { file: "2026-01-04-212143-Jupiter.JPG", timestamp: "2026-01-04 21:21:43", jupiterX: 485, jupiterY: 525, scale: SCALE, angle: -36.6, ioX: 389674, ioY: -72531, europaX: 204100, europaY: -26316, ganymedeX: -938937, ganymedeY: 156743, callistoX: -1618135, callistoY: 267096 },
+            { file: "2026-01-05-040832-Jupiter.JPG", timestamp: "2026-01-05 04:08:32", jupiterX: 607, jupiterY: 525, scale: SCALE, angle: 36.5, ioX: 108345, ioY: -29151, europaX: 472746, europaY: -78558, ganymedeX: -1016025, ganymedeY: 176919, callistoX: -1699426, callistoY: 284585 }
+        ];
+
+        // Kendte værdier
+        const JUPITER_DIAMETER_KM = 139820;
+        const DEFAULT_SCALE = 3600; // Fallback km/pixel - verified from moon position matching
+
+        const knownValues = {
+            io: { period: 1.769, distance: 422000 },
+            europa: { period: 3.551, distance: 671000 },
+            ganymede: { period: 7.155, distance: 1070000 },
+            callisto: { period: 16.689, distance: 1883000 }
+        };
+
+        const moonColors = {
+            io: '#e8a848',
+            europa: '#a8c8e8',
+            ganymede: '#b8b8c8',
+            callisto: '#a89888'
+        };
+
+        const moonNames = {
+            io: 'Io',
+            europa: 'Europa',
+            ganymede: 'Ganymedes',
+            callisto: 'Callisto'
+        };
+
+        // ============================================
+        // STATE
+        // ============================================
+        let currentImageIndex = 0;
+        let selectedMoon = 'io';
+        let measurements = { io: [], europa: [], ganymede: [], callisto: [] };
+        let jupiterCenter = { x: 0, y: 0 };
+        let zoomLevel = 1;
+        let showHelp = false;
+        let showJupiterRing = false;
+        let selectedChartMoon = 'io';
+        let imageAdjustments = {}; // Per-image Jupiter position adjustments { filename: {x, y} }
+
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasWrapper = document.getElementById('canvasWrapper');
+        let currentImage = new Image();
+        let baseCanvasWidth, baseCanvasHeight;
+        let displayScale = 1; // Scale factor from original image to canvas
+
+        // Pixels to km conversion (canvas pixels to km)
+        // Uses per-image scale factor from calibration
+        function pixelsToKm(canvasPixels) {
+            // Convert canvas pixels to original image pixels, then to km
+            const originalPixels = canvasPixels / displayScale;
+            const imgScale = images[currentImageIndex].scale || DEFAULT_SCALE;
+            return originalPixels * imgScale;
+        }
+
+        function kmToPixels(km) {
+            // Convert km to original pixels, then to canvas pixels
+            const imgScale = images[currentImageIndex].scale || DEFAULT_SCALE;
+            const originalPixels = km / imgScale;
+            return originalPixels * displayScale;
+        }
+
+        // Parse timestamp
+        const firstTime = new Date(images[0].timestamp.replace(' ', 'T'));
+        function daysFromStart(timestamp) {
+            const t = new Date(timestamp.replace(' ', 'T'));
+            return (t - firstTime) / (1000 * 60 * 60 * 24);
+        }
+
+        function formatDate(timestamp) {
+            const parts = timestamp.split(' ')[0].split('-');
+            const months = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+            return `${parseInt(parts[2])}. ${months[parseInt(parts[1])-1]} ${parts[0]}`;
+        }
+
+        function formatTime(timestamp) {
+            return timestamp.split(' ')[1].substring(0, 5);
+        }
+
+        // ============================================
+        // IMAGE VIEWER
+        // ============================================
+        function loadImage(index) {
+            currentImageIndex = index;
+            currentImage = new Image();
+            currentImage.onload = function() {
+                const maxWidth = Math.min(800, window.innerWidth - 100);
+                displayScale = maxWidth / currentImage.width;
+                baseCanvasWidth = currentImage.width * displayScale;
+                baseCanvasHeight = currentImage.height * displayScale;
+
+                canvas.width = baseCanvasWidth;
+                canvas.height = baseCanvasHeight;
+
+                drawImage();
+            };
+            currentImage.src = 'images/Jupiterdata/' + images[index].file;
+
+            // Update info
+            document.getElementById('imageDate').textContent = formatDate(images[index].timestamp);
+            document.getElementById('timestamp').textContent = formatTime(images[index].timestamp);
+            const imgScale = images[index].scale || DEFAULT_SCALE;
+            document.getElementById('imageIndex').textContent = `Billede ${index + 1} af ${images.length} (skala: ${imgScale.toFixed(0)} km/px)`;
+
+            // Check for time gap
+            const timeGapEl = document.getElementById('timeGap');
+            if (index > 0) {
+                const prevTime = new Date(images[index-1].timestamp.replace(' ', 'T'));
+                const currTime = new Date(images[index].timestamp.replace(' ', 'T'));
+                const hoursDiff = (currTime - prevTime) / (1000 * 60 * 60);
+                if (hoursDiff > 24) {
+                    const daysDiff = Math.floor(hoursDiff / 24);
+                    timeGapEl.textContent = `⚠ ${daysDiff} dage siden forrige observation (skydække)`;
+                    timeGapEl.style.display = 'inline-block';
+                } else {
+                    timeGapEl.style.display = 'none';
+                }
+            } else {
+                timeGapEl.style.display = 'none';
+            }
+
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === images.length - 1;
+
+            // Update adjustment sliders for this image
+            if (typeof updateAdjustmentSliders === 'function') {
+                updateAdjustmentSliders();
+            }
+        }
+
+        function drawImage() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Get Jupiter position for this image (scaled to canvas size)
+            const imgData = images[currentImageIndex];
+            const adj = imageAdjustments[imgData.file] || { x: 0, y: 0 };
+            jupiterCenter = {
+                x: (imgData.jupiterX + adj.x) * displayScale,
+                y: (imgData.jupiterY + adj.y) * displayScale
+            };
+
+            // Apply zoom centered on Jupiter
+            ctx.save();
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            ctx.translate(centerX, centerY);
+            ctx.scale(zoomLevel, zoomLevel);
+            ctx.translate(-jupiterCenter.x, -jupiterCenter.y);
+
+            ctx.drawImage(currentImage, 0, 0, baseCanvasWidth, baseCanvasHeight);
+
+            // Center line (vertical through Jupiter)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1 / zoomLevel;
+            ctx.setLineDash([5 / zoomLevel, 5 / zoomLevel]);
+            ctx.beginPath();
+            ctx.moveTo(jupiterCenter.x, 0);
+            ctx.lineTo(jupiterCenter.x, baseCanvasHeight);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Small marker at Jupiter center for reference
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.5)';
+            ctx.beginPath();
+            ctx.arc(jupiterCenter.x, jupiterCenter.y, 3 / zoomLevel, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Help overlay for all moons
+            if (showHelp) {
+                drawAllMoonHelp();
+            }
+
+            // Jupiter size ring overlay
+            if (showJupiterRing) {
+                drawJupiterRing();
+            }
+
+            // Draw existing measurements for this image
+            const timestamp = images[currentImageIndex].timestamp;
+            for (const moon in measurements) {
+                const moonData = measurements[moon].filter(m => m.timestamp === timestamp);
+                moonData.forEach(m => {
+                    drawMeasurementMarker(m.canvasX, m.canvasY, moonColors[moon], moonNames[moon]);
+                });
+            }
+
+            ctx.restore();
+        }
+
+        function drawMoonHelpMarker(moonX, moonY, color, name) {
+            // Get optimized angle for this image plus any user adjustment
+            const imgData = images[currentImageIndex];
+            const adj = imageAdjustments[imgData.file] || { x: 0, y: 0, angle: 0, scale: 0 };
+            const parallacticAngle = ((imgData.angle || 0) + (adj.angle || 0)) * Math.PI / 180;
+
+            // Convert position from km to canvas pixels using adjusted scale
+            const baseScale = imgData.scale || DEFAULT_SCALE;
+            const adjustedScale = baseScale + (adj.scale || 0);
+            const xPx = (moonX / adjustedScale) * displayScale;
+            const yPx = (moonY / adjustedScale) * displayScale;
+
+            // Rotate position by parallactic angle
+            const rotatedX = xPx * Math.cos(parallacticAngle) - yPx * Math.sin(parallacticAngle);
+            const rotatedY = xPx * Math.sin(parallacticAngle) + yPx * Math.cos(parallacticAngle);
+
+            // Position relative to Jupiter center (which already includes any adjustments)
+            const screenX = jupiterCenter.x + rotatedX;
+            const screenY = jupiterCenter.y + rotatedY;
+
+            // Check if position is within canvas bounds (with some margin)
+            if (screenX < -100 || screenX > baseCanvasWidth + 100 ||
+                screenY < -100 || screenY > baseCanvasHeight + 100) {
+                return; // Moon is off-screen, don't draw
+            }
+
+            // Draw marker
+            const colorRgb = color.replace('#', '');
+            const r = parseInt(colorRgb.substr(0, 2), 16);
+            const g = parseInt(colorRgb.substr(2, 2), 16);
+            const b = parseInt(colorRgb.substr(4, 2), 16);
+
+            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.7)`;
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.15)`;
+            ctx.lineWidth = 2 / zoomLevel;
+
+            const radius = 15 / zoomLevel;
+            ctx.beginPath();
+            ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.9)`;
+            ctx.font = `${10 / zoomLevel}px JetBrains Mono`;
+            ctx.textAlign = 'center';
+            ctx.fillText(name, screenX, screenY - radius - 4 / zoomLevel);
+        }
+
+        function drawAllMoonHelp() {
+            const imgData = images[currentImageIndex];
+
+            // Draw all four moons
+            drawMoonHelpMarker(imgData.ioX, imgData.ioY, moonColors.io, 'Io');
+            drawMoonHelpMarker(imgData.europaX, imgData.europaY, moonColors.europa, 'Europa');
+            drawMoonHelpMarker(imgData.ganymedeX, imgData.ganymedeY, moonColors.ganymede, 'Ganymedes');
+            drawMoonHelpMarker(imgData.callistoX, imgData.callistoY, moonColors.callisto, 'Callisto');
+        }
+
+        function drawJupiterRing() {
+            // Draw a ring showing Jupiter's actual size based on the scale
+            const imgData = images[currentImageIndex];
+            const adj = imageAdjustments[imgData.file] || { x: 0, y: 0, angle: 0, scale: 0 };
+            const baseScale = imgData.scale || DEFAULT_SCALE;
+            const adjustedScale = baseScale + (adj.scale || 0);
+            // Jupiter diameter in pixels (original image)
+            const jupiterDiameterPx = JUPITER_DIAMETER_KM / adjustedScale;
+            // Convert to canvas pixels
+            const radiusPx = (jupiterDiameterPx / 2) * displayScale;
+
+            ctx.strokeStyle = 'rgba(255, 100, 100, 0.6)';
+            ctx.lineWidth = 2 / zoomLevel;
+            ctx.setLineDash([4 / zoomLevel, 4 / zoomLevel]);
+            ctx.beginPath();
+            ctx.arc(jupiterCenter.x, jupiterCenter.y, radiusPx, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.8)';
+            ctx.font = `${9 / zoomLevel}px JetBrains Mono`;
+            ctx.textAlign = 'center';
+            ctx.fillText('Jupiter ø', jupiterCenter.x, jupiterCenter.y - radiusPx - 6 / zoomLevel);
+        }
+
+        function drawMeasurementMarker(x, y, color, label) {
+            ctx.beginPath();
+            ctx.arc(x, y, 8 / zoomLevel, 0, Math.PI * 2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2 / zoomLevel;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(x, y, 3 / zoomLevel, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // Canvas click handler
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            // Get screen coordinates
+            const screenX = (e.clientX - rect.left) * scaleX;
+            const screenY = (e.clientY - rect.top) * scaleY;
+
+            // Transform back from zoom (zoom is centered on Jupiter)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Reverse: P = (screen - canvasCenter) / zoomLevel + jupiterPos
+            let x = (screenX - centerX) / zoomLevel + jupiterCenter.x;
+            let y = (screenY - centerY) / zoomLevel + jupiterCenter.y;
+
+            const relativeXPx = x - jupiterCenter.x;
+            const relativeXKm = pixelsToKm(relativeXPx);
+
+            const measurement = {
+                timestamp: images[currentImageIndex].timestamp,
+                days: daysFromStart(images[currentImageIndex].timestamp),
+                positionPx: relativeXPx,
+                positionKm: relativeXKm,
+                canvasX: x,
+                canvasY: y
+            };
+
+            measurements[selectedMoon].push(measurement);
+            updateMeasurementsTable();
+            updateMoonCounts();
+            drawImage();
+            updateFitterStatuses();
+
+            localStorage.setItem('jupiterMeasurements', JSON.stringify(measurements));
+        });
+
+        // Navigation
+        document.getElementById('prevBtn').addEventListener('click', () => loadImage(currentImageIndex - 1));
+        document.getElementById('nextBtn').addEventListener('click', () => loadImage(currentImageIndex + 1));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentImageIndex > 0) loadImage(currentImageIndex - 1);
+            if (e.key === 'ArrowRight' && currentImageIndex < images.length - 1) loadImage(currentImageIndex + 1);
+        });
+
+        // Zoom controls
+        document.getElementById('zoomIn').addEventListener('click', () => {
+            zoomLevel = Math.min(4, zoomLevel + 0.25);
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            drawImage();
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', () => {
+            zoomLevel = Math.max(1, zoomLevel - 0.25);
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            drawImage();
+        });
+
+        // Mouse wheel zoom
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomLevel = Math.min(4, zoomLevel + 0.1);
+            } else {
+                zoomLevel = Math.max(1, zoomLevel - 0.1);
+            }
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            drawImage();
+        });
+
+        // Help button
+        document.getElementById('helpBtn').addEventListener('click', function() {
+            showHelp = !showHelp;
+            this.classList.toggle('active', showHelp);
+            document.getElementById('adjustmentControls').style.display = showHelp ? 'block' : 'none';
+            drawImage();
+        });
+
+        // Jupiter ring button
+        document.getElementById('jupiterRingBtn').addEventListener('click', function() {
+            showJupiterRing = !showJupiterRing;
+            this.classList.toggle('active', showJupiterRing);
+            drawImage();
+        });
+
+        // Adjustment sliders - per-image Jupiter position, angle, and scale adjustments
+        function getCurrentAdjustment() {
+            const filename = images[currentImageIndex].file;
+            return imageAdjustments[filename] || { x: 0, y: 0, angle: 0, scale: 0 };
+        }
+
+        function setCurrentAdjustment(x, y, angle, scale) {
+            const filename = images[currentImageIndex].file;
+            imageAdjustments[filename] = { x, y, angle, scale };
+            localStorage.setItem('jupiterAdjustments', JSON.stringify(imageAdjustments));
+        }
+
+        function updateAdjustmentSliders() {
+            const adj = getCurrentAdjustment();
+            document.getElementById('xOffset').value = adj.x;
+            document.getElementById('yOffset').value = adj.y;
+            document.getElementById('angleOffset').value = adj.angle || 0;
+            document.getElementById('scaleOffset').value = adj.scale || 0;
+            document.getElementById('xOffsetValue').textContent = adj.x;
+            document.getElementById('yOffsetValue').textContent = adj.y;
+            document.getElementById('angleOffsetValue').textContent = adj.angle || 0;
+            document.getElementById('scaleOffsetValue').textContent = adj.scale || 0;
+        }
+
+        document.getElementById('xOffset').addEventListener('input', function() {
+            const adj = getCurrentAdjustment();
+            adj.x = parseFloat(this.value);
+            setCurrentAdjustment(adj.x, adj.y, adj.angle, adj.scale);
+            document.getElementById('xOffsetValue').textContent = this.value;
+            drawImage();
+        });
+
+        document.getElementById('yOffset').addEventListener('input', function() {
+            const adj = getCurrentAdjustment();
+            adj.y = parseFloat(this.value);
+            setCurrentAdjustment(adj.x, adj.y, adj.angle, adj.scale);
+            document.getElementById('yOffsetValue').textContent = this.value;
+            drawImage();
+        });
+
+        document.getElementById('angleOffset').addEventListener('input', function() {
+            const adj = getCurrentAdjustment();
+            adj.angle = parseFloat(this.value);
+            setCurrentAdjustment(adj.x, adj.y, adj.angle, adj.scale);
+            document.getElementById('angleOffsetValue').textContent = this.value;
+            drawImage();
+        });
+
+        document.getElementById('scaleOffset').addEventListener('input', function() {
+            const adj = getCurrentAdjustment();
+            adj.scale = parseFloat(this.value);
+            setCurrentAdjustment(adj.x, adj.y, adj.angle, adj.scale);
+            document.getElementById('scaleOffsetValue').textContent = this.value;
+            drawImage();
+        });
+
+        document.getElementById('resetAdjustments').addEventListener('click', function() {
+            setCurrentAdjustment(0, 0, 0, 0);
+            document.getElementById('xOffset').value = 0;
+            document.getElementById('yOffset').value = 0;
+            document.getElementById('angleOffset').value = 0;
+            document.getElementById('scaleOffset').value = 0;
+            document.getElementById('xOffsetValue').textContent = '0';
+            document.getElementById('yOffsetValue').textContent = '0';
+            document.getElementById('angleOffsetValue').textContent = '0';
+            document.getElementById('scaleOffsetValue').textContent = '0';
+            drawImage();
+        });
+
+        // Moon selector
+        document.querySelectorAll('.moon-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.moon-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedMoon = this.dataset.moon;
+            });
+        });
+
+        function updateMoonCounts() {
+            document.querySelectorAll('.moon-btn').forEach(btn => {
+                const moon = btn.dataset.moon;
+                const count = measurements[moon].length;
+                btn.querySelector('.count').textContent = `(${count})`;
+            });
+        }
+
+        function updateFitterStatuses() {
+            ['io', 'europa', 'ganymede', 'callisto'].forEach(moon => {
+                const count = measurements[moon].length;
+                document.getElementById(moon + '-status').textContent = `${count} målinger`;
+
+                const fitter = document.querySelector(`.moon-fitter[data-moon="${moon}"]`);
+                fitter.classList.toggle('inactive', count < 2);
+            });
+        }
+
+        // ============================================
+        // MEASUREMENTS TABLE
+        // ============================================
+        function updateMeasurementsTable() {
+            const tbody = document.getElementById('measurementsBody');
+            const allMeasurements = [];
+
+            for (const moon in measurements) {
+                measurements[moon].forEach((m, idx) => {
+                    allMeasurements.push({ ...m, moon, idx });
+                });
+            }
+
+            allMeasurements.sort((a, b) => a.days - b.days);
+
+            if (allMeasurements.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim);">Ingen målinger endnu</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = allMeasurements.map(m => `
+                <tr>
+                    <td style="color: ${moonColors[m.moon]}">${moonNames[m.moon]}</td>
+                    <td>${formatDate(m.timestamp)} ${formatTime(m.timestamp)}</td>
+                    <td>${Math.round(m.positionKm).toLocaleString('da-DK')} km</td>
+                    <td>${m.days.toFixed(2)} d</td>
+                    <td><button class="delete-measurement" data-moon="${m.moon}" data-idx="${m.idx}">×</button></td>
+                </tr>
+            `).join('');
+
+            tbody.querySelectorAll('.delete-measurement').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const moon = this.dataset.moon;
+                    const idx = parseInt(this.dataset.idx);
+                    measurements[moon].splice(idx, 1);
+                    updateMeasurementsTable();
+                    updateMoonCounts();
+                    updateFitterStatuses();
+                    drawImage();
+                    localStorage.setItem('jupiterMeasurements', JSON.stringify(measurements));
+                });
+            });
+        }
+
+        document.getElementById('clearMeasurements').addEventListener('click', () => {
+            if (confirm('Er du sikker på at du vil slette alle målinger?')) {
+                measurements = { io: [], europa: [], ganymede: [], callisto: [] };
+                updateMeasurementsTable();
+                updateMoonCounts();
+                updateFitterStatuses();
+                drawImage();
+                localStorage.removeItem('jupiterMeasurements');
+            }
+        });
+
+        // ============================================
+        // STEP NAVIGATION
+        // ============================================
+        document.querySelectorAll('.step-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const step = this.dataset.step;
+
+                document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+                document.getElementById('step' + step).classList.add('active');
+
+                if (step === '2') {
+                    updateFitterStatuses();
+                    updatePositionChart();
+                }
+                if (step === '3') updateKeplerResults();
+            });
+        });
+
+        document.getElementById('toStep2').addEventListener('click', () => {
+            document.querySelector('[data-step="2"]').click();
+        });
+
+        document.getElementById('toStep3').addEventListener('click', () => {
+            document.querySelector('[data-step="3"]').click();
+        });
+
+        // ============================================
+        // MODEL FITTING
+        // ============================================
+        let positionChart = null;
+
+        // Chart moon selector
+        document.querySelectorAll('.chart-moon-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.chart-moon-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedChartMoon = this.dataset.moon;
+                updatePositionChart();
+            });
+        });
+
+        function getModelParams() {
+            return {
+                io: {
+                    amplitude: parseFloat(document.getElementById('io-amplitude').value) * 1000,
+                    period: parseFloat(document.getElementById('io-period').value)
+                },
+                europa: {
+                    amplitude: parseFloat(document.getElementById('europa-amplitude').value) * 1000,
+                    period: parseFloat(document.getElementById('europa-period').value)
+                },
+                ganymede: {
+                    amplitude: parseFloat(document.getElementById('ganymede-amplitude').value) * 1000,
+                    period: parseFloat(document.getElementById('ganymede-period').value)
+                },
+                callisto: {
+                    amplitude: parseFloat(document.getElementById('callisto-amplitude').value) * 1000,
+                    period: parseFloat(document.getElementById('callisto-period').value)
+                }
+            };
+        }
+
+        function modelPosition(amplitude, period, days, phase = 0) {
+            return amplitude * Math.sin(2 * Math.PI * days / period + phase);
+        }
+
+        function findBestPhase(moon, params) {
+            const data = measurements[moon];
+            if (data.length < 2) return 0;
+
+            let bestPhase = 0;
+            let minError = Infinity;
+
+            for (let phase = 0; phase < 2 * Math.PI; phase += 0.05) {
+                let totalError = 0;
+                data.forEach(m => {
+                    const predicted = modelPosition(params.amplitude, params.period, m.days, phase);
+                    totalError += Math.pow(predicted - m.positionKm, 2);
+                });
+                if (totalError < minError) {
+                    minError = totalError;
+                    bestPhase = phase;
+                }
+            }
+            return bestPhase;
+        }
+
+        function calculateFitScore(moon, params) {
+            const data = measurements[moon];
+            if (data.length < 2) return 0;
+
+            const bestPhase = findBestPhase(moon, params);
+            let totalError = 0;
+
+            data.forEach(m => {
+                const predicted = modelPosition(params.amplitude, params.period, m.days, bestPhase);
+                totalError += Math.abs(predicted - m.positionKm);
+            });
+
+            const avgError = totalError / data.length;
+            const normalizedError = avgError / params.amplitude;
+            const score = Math.max(0, Math.min(100, 100 * (1 - normalizedError)));
+
+            return score;
+        }
+
+        function updatePositionChart() {
+            const params = getModelParams();
+            const moon = selectedChartMoon;
+            const datasets = [];
+
+            // Data points
+            if (measurements[moon].length > 0) {
+                datasets.push({
+                    label: moonNames[moon] + ' (målt)',
+                    data: measurements[moon].map(m => ({ x: m.days, y: m.positionKm / 1000 })),
+                    backgroundColor: moonColors[moon],
+                    borderColor: moonColors[moon],
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    showLine: false
+                });
+            }
+
+            // Model curve
+            const maxDays = Math.max(...images.map(img => daysFromStart(img.timestamp)));
+            const curveData = [];
+            const bestPhase = findBestPhase(moon, params[moon]);
+
+            for (let d = 0; d <= maxDays; d += 0.02) {
+                curveData.push({
+                    x: d,
+                    y: modelPosition(params[moon].amplitude, params[moon].period, d, bestPhase) / 1000
+                });
+            }
+
+            datasets.push({
+                label: moonNames[moon] + ' (model)',
+                data: curveData,
+                borderColor: moonColors[moon],
+                borderWidth: 2,
+                pointRadius: 0,
+                showLine: true,
+                fill: false,
+                tension: 0.4
+            });
+
+            // Update fit scores for all moons
+            ['io', 'europa', 'ganymede', 'callisto'].forEach(m => {
+                const score = calculateFitScore(m, params[m]);
+                document.getElementById(m + '-fit').style.width = score + '%';
+                document.getElementById(m + '-score').textContent = measurements[m].length >= 2 ? score.toFixed(0) + '%' : '-';
+            });
+
+            if (positionChart) positionChart.destroy();
+
+            positionChart = new Chart(document.getElementById('positionChart'), {
+                type: 'scatter',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 200 },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Tid (dage fra start)', color: '#9999aa', font: { size: 12 } },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#9999aa' },
+                            min: 0
+                        },
+                        y: {
+                            title: { display: true, text: 'Position (×1000 km fra Jupiter)', color: '#9999aa', font: { size: 12 } },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#9999aa' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#f2f2f7', font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.label.includes('målt')) {
+                                        return `${(context.raw.y * 1000).toLocaleString('da-DK')} km ved dag ${context.raw.x.toFixed(2)}`;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Slider event listeners
+        ['io', 'europa', 'ganymede', 'callisto'].forEach(moon => {
+            const ampSlider = document.getElementById(moon + '-amplitude');
+            const perSlider = document.getElementById(moon + '-period');
+
+            ampSlider.addEventListener('input', function() {
+                document.getElementById(moon + '-amp-value').textContent = this.value;
+                if (selectedChartMoon === moon) updatePositionChart();
+                else {
+                    // Just update the score
+                    const params = getModelParams();
+                    const score = calculateFitScore(moon, params[moon]);
+                    document.getElementById(moon + '-fit').style.width = score + '%';
+                    document.getElementById(moon + '-score').textContent = measurements[moon].length >= 2 ? score.toFixed(0) + '%' : '-';
+                }
+            });
+
+            perSlider.addEventListener('input', function() {
+                document.getElementById(moon + '-per-value').textContent = parseFloat(this.value).toFixed(2);
+                if (selectedChartMoon === moon) updatePositionChart();
+                else {
+                    const params = getModelParams();
+                    const score = calculateFitScore(moon, params[moon]);
+                    document.getElementById(moon + '-fit').style.width = score + '%';
+                    document.getElementById(moon + '-score').textContent = measurements[moon].length >= 2 ? score.toFixed(0) + '%' : '-';
+                }
+            });
+        });
+
+        // ============================================
+        // KEPLER'S LAW
+        // ============================================
+        let keplerChart = null;
+
+        function updateKeplerResults() {
+            const params = getModelParams();
+            const tbody = document.getElementById('keplerBody');
+            const rows = [];
+            const chartData = [];
+
+            for (const moon in params) {
+                const T = params[moon].period;
+                const a = params[moon].amplitude;
+                const T2 = T * T;
+                const a3 = Math.pow(a / 1e6, 3); // in (10^6 km)^3
+                const ratio = T2 / a3;
+
+                rows.push(`
+                    <tr>
+                        <td style="color: ${moonColors[moon]}">${moonNames[moon]}</td>
+                        <td class="measured">${T.toFixed(2)} d</td>
+                        <td class="known">${knownValues[moon].period.toFixed(2)} d</td>
+                        <td class="measured">${(a/1000).toFixed(0)} ×10³ km</td>
+                        <td class="known">${(knownValues[moon].distance/1000).toFixed(0)} ×10³ km</td>
+                        <td>${ratio.toFixed(3)}</td>
+                    </tr>
+                `);
+
+                chartData.push({
+                    x: a3,
+                    y: T2,
+                    moon: moon
+                });
+            }
+
+            tbody.innerHTML = rows.join('');
+
+            // Kepler chart
+            if (keplerChart) keplerChart.destroy();
+
+            // Add trend line
+            const xValues = chartData.map(d => d.x);
+            const yValues = chartData.map(d => d.y);
+            const maxX = Math.max(...xValues) * 1.1;
+            const avgRatio = yValues.reduce((a,b) => a+b, 0) / xValues.reduce((a,b) => a+b, 0);
+
+            keplerChart = new Chart(document.getElementById('keplerChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Dine målinger',
+                            data: chartData,
+                            backgroundColor: chartData.map(d => moonColors[d.moon]),
+                            pointRadius: 12,
+                            pointHoverRadius: 14
+                        },
+                        {
+                            label: 'Lineært fit (T² ∝ a³)',
+                            data: [{ x: 0, y: 0 }, { x: maxX, y: maxX * avgRatio }],
+                            borderColor: 'rgba(212, 168, 75, 0.5)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false,
+                            showLine: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'a³ [(10⁶ km)³]', color: '#9999aa' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#9999aa' },
+                            beginAtZero: true
+                        },
+                        y: {
+                            title: { display: true, text: 'T² [dage²]', color: '#9999aa' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#9999aa' },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#f2f2f7' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.raw.moon) {
+                                        return moonNames[context.raw.moon];
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        const saved = localStorage.getItem('jupiterMeasurements');
+        if (saved) {
+            measurements = JSON.parse(saved);
+            updateMoonCounts();
+        }
+
+        // Load saved Jupiter position adjustments
+        const savedAdjustments = localStorage.getItem('jupiterAdjustments');
+        if (savedAdjustments) {
+            imageAdjustments = JSON.parse(savedAdjustments);
+        }
+
+        loadImage(0);
+        updateMeasurementsTable();
+        updateFitterStatuses();
+        updateAdjustmentSliders();
+    </script>
+</body>
+</html>
